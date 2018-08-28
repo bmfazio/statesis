@@ -1,0 +1,9 @@
+[Dupuy 2017]Inference in a generalized endpoint-inflated binomial regression model.pdf
+[Johnson 2004]A Bayesian Chi-Squared Test fo.pdf
+[Kahn]Discharge Rates of Medicare Stroke Patients to Skilled Nursing.pdf
+[Lambert 1992]Zero-Inflated Poisson Regression, with an Application to Defects in Manufacturing.pdf
+[Skellam]A Probability Distribution Derived from the Binomial Distribution by .pdf
+[Tak 2015]Data-dependent Posterior Propriety of Bayesian BB logit model.pdf
+[Tian 2015]Generalized endpoint-inflated binomial model.pdf
+[Williams]Extra-Binomial Variation in Logistic Linear Models.pdf
+FERNANDEZ_RENZO_REGRESSION_MODEL.pdf

@@ -1,0 +1,163 @@
+
+\documentclass[11pt,oneside,a4paper]{book}
+
+% ---------------------------------------------------------------------------- %
+
+\usepackage[spanish]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[pdftex]{graphicx}           % para insertar figuras en formato pdf/png/jpg
+\usepackage{color}
+\usepackage{pifont}
+\usepackage{amsfonts}
+\usepackage{amssymb} 
+\usepackage{amsmath}
+\usepackage{setspace}                   % espaciamento flexible
+\usepackage[small,compact]{titlesec} 	% encabezamiento de los titulos: menores y compactos
+\usepackage{indentfirst} 				% indentacion del primer parrafo
+\usepackage[round]{natbib} % libreria para la bibliografia
+\usepackage{subfigure} 					% uso de varias figuras en una sola
+\usepackage[nottoc]{tocbibind} 			% para que la bibliografia aparezca en el indice
+\usepackage{setspace}
+\usepackage{longtable}
+\usepackage{lscape}
+\usepackage{caption}
+\usepackage[colorlinks=true,urlcolor=red,citecolor=green,linkcolor=blue]{hyperref}
+\usepackage[a4paper,top=2.54cm, bottom=2.54cm, left=3cm, right=2.54cm]{geometry} %margenes
+
+% ---------------------------------------------------------------------------- %
+% Algunos comandos
+\graphicspath{{./figuras/}} 			% direccion donde se encontraran las figuras
+\makeindex  							% para crear el indice
+\raggedbottom   					% para no tener espacios extras en el texto
+\listfiles  							% genera una lista de los archivos utilizados durante la compilacion
+\normalsize
+
+% Para tener un tamaoo de fuente menor (para figuras e cuadros)
+\newcommand{\captionfonts}{\small}
+\makeatletter  % Allow the use of @ in command names
+\long\def\@makecaption#1#2{%
+  \vskip\abovecaptionskip
+  \sbox\@tempboxa{{\captionfonts #1: #2}}%
+  \ifdim \wd\@tempboxa >\hsize
+    {\captionfonts #1: #2\par}
+  \else
+    \hbox to\hsize{\hfil\box\@tempboxa\hfil}%
+  \fi
+  \vskip\belowcaptionskip}
+\makeatother   % Cancel the effect of \makeatletter
+
+% para mejorar la presentacioon de las figuras en el texto
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.75}
+
+% ---------------------------------------------------------------------------- %
+% Cuerpo del texto
+\begin{document}
+\frontmatter \onehalfspacing  % tipo de interlineado
+
+% ---------------------------------------------------------------------------- %
+% Carotula
+\thispagestyle{empty}
+\begin{center}
+\vspace*{1cm}
+\textbf{\Large{PONTIFICIA UNIVERSIDAD CAT\'OLICA DEL PER\'U }}\\
+\vspace*{1.2cm}
+
+\textbf{\Large{ESCUELA DE GRADUADOS}}\\
+\vspace*{0.5cm}
+\begin{center}
+\includegraphics[scale=.25]{logoPUCP}
+\end{center}
+\vspace{0.5cm}
+
+\textbf{\Large{``Endpoint-inflated beta-binomial regression\\for correlated count data''}}\\
+\vspace{1.2cm}
+\textbf{\large{TESIS PARA OPTAR POR EL GRADO DE MAGISTER EN\\
+  ESTAD\'ISTICA}}\\
+  
+\vspace*{1.2cm}
+\textbf{\large{Presentado por:}}\\
+\vspace*{0.3cm}
+\textbf{\large{Boris Manuel Fazio Luna}}\\
+\vspace*{1.2cm}
+\textbf{\large{Asesor: Victor Giancarlo Sal Y Rosas Celi}}\\
+
+\vspace*{1.2cm}
+
+\textbf{\large{
+	Miembros del jurado:\\
+	Dr. Nombre completo jurado 1 \\
+	Dr. Nombre completo jurado 2 \\
+	Dr. Nombre completo jurado 3  
+	}} 
+	   
+\vspace*{1.2cm}
+    
+\normalsize{Lima, Julio 2018}
+\end{center}
+
+%-------------------------------------------
+% Dedicatoria
+%\chapter*{Dedicatoria}
+%Dedicatoria...
+
+%-------------------------------------------
+% Agradecimentos
+%\chapter*{Agradecimentos}
+%Agradecimentos ...
+
+% ------------------------------------------
+% Resumen
+%\chapter*{Resumen}
+%Resumen en espanol ...
+
+%\noindent \textbf{Palabras-clave:} palabra-clave1, palabra-clave2, palabra-clave3.
+
+% ------------------------------------------
+% Abstract
+%\chapter*{Abstract}
+%Abstract ...
+
+%\noindent \textbf{Keywords:} keyword1, keyword2, keyword3.
+
+% ------------------------------------------
+% Indice
+\tableofcontents    % imprime el indice
+% ------------------------------------------
+% Listas: abreviaturas, simbolos, figuras y cuadros
+
+\listoffigures               % lista de Figuras
+\listoftables                % lista de cuadros
+
+% ---------------------------------------------------------------------------- %
+% Capitulos
+\mainmatter
+
+%Definir el interlineado
+%\singlespacing		% interlineado simple
+\onehalfspacing		% interlineado 1.5
+%\doublespacing		% interlineado doble 
+
+%Lista de archivos .tex por capitulo
+\input cap-01introduction
+\input cap-02distribution
+\input cap-03model
+\input cap-04estimation
+\input cap-05application
+\input cap-06conclusion
+\appendix
+\include{ape-01}
+
+% ---------------------------------------------------------------------------- %
+% Bibliografia
+\backmatter \singlespacing
+
+\nocite{*} 
+\bibliography{bibliografia}
+\bibliographystyle{dcu}
+
+
+\end{document}
+
+% fin del archivo :-)

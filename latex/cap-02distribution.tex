@@ -1,0 +1,43 @@
+%% ------------------------------------------------------------------------- %%
+\chapter{The endpoint-inflated beta-binomial distribution}
+\label{cap:distribution}
+
+%% ------------------------------------------------------------------------- %%
+\section{Probability mass function}
+\label{sec:pmf}
+
+Let $I_c(x)$ be an indicator function for point $c$ and have $Z \sim \mathrm{BB}(\alpha, \beta; n)$, denoting a discrete random variable with beta-binomial (BB) distribution. Then a random variable $Y$ is said to have an endpoint-inflated BB distribution if its pmf is
+
+\begin{equation}
+\begin{split}
+f_{Y}(y \mid \alpha , \beta , p^{_0}, p^{_1}; n)
+&= p^{_0}I_0(y) + p^{_1}I_n(y) + p^{_2} f_{Z}(y)\\
+&=	\begin{cases}
+p^{_0} + p^{_2} {B(\alpha, n+\beta) \over B(\alpha,\beta)}, & \mathrm{if}\; y=0\\
+p^{_2} {n \choose y} {B(y+\alpha, n-y+\beta) \over B(\alpha,\beta)}, & \mathrm{if}\; y=1,...,n-1\\
+p^{_1} + p^{_2} {B(n+\alpha, \beta) \over B(\alpha,\beta)}, & \mathrm{if}\; y=n\\
+0, & \mathrm{otherwise}
+	\end{cases}
+\end{split}
+\label{densidad}
+\end{equation}
+	
+\noindent where the shape parameters $\alpha > 0$ and $\beta > 0$ are unknown, as are $p^{_0} \in (0, 1)$ and $p^{_1} \in (0, 1)$, which represent the proportions of left an right endpoints that occur in excess of that which would be expected if the generating distribution was beta-binomial alone. Clearly, $p^{_2} = 1 -  (p^{_0}+p^{_1})$.  The right endpoint, $n$, is assumed to be known.\\
+
+\section{Mean and precision reparametrization}
+\label{sec:reparam}
+
+We parametrize the BB component of the distribution in terms of its mean, $\mu \in (0,1)$, and precision, $\phi > 0$. The shape parameters can then be expressed as $\alpha = \mu\phi$ and $\beta = (1-\mu)\phi$. This results in a simple expression for the mean, $E(Y) = n\mu$, which allows us to model it in terms of a single, easily interpretable parameter. Note that the variance, $V(Y) = n\mu(1-\mu)(\phi+n)/(\phi+1)$, approaches a binomial variance for large $\phi$ and is bounded for a given value of $n$.\\
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{eibb2.png}
+  \caption{The EIBB distribution for three combinations of mean and precision parameters with fixed mixture proportions $p^{_0} = p^{_1} = 0.25$}
+  \label{fig:eibb}
+\end{figure}
+
+\section{Identifiability}
+\label{sec:ident}
+
+In \cite{Dupuy2017}, conditions for identifiability of the closely related endpoint-inflated binomial likelihood are given. Briefly, all three componentes of the mixture must have nonzero values and all observed $Y_i$ should have a corresponding $n_i \in \{3,...,M\}$ for some finite integer $M$.
+
+Providing a similar result for the beta-binomial case is complicated by the presence of parameters inside gamma functions. However, in the following sections it will be shown via simulations that even when the likelihood alone is not strictly identifiable, a combination of suitable priors and data allows for successful posterior inference.

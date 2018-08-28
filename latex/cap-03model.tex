@@ -1,0 +1,123 @@
+%% ------------------------------------------------------------------------- %%
+\chapter{Regression models with EIBB}
+\label{cap:model}
+
+%% ------------------------------------------------------------------------- %%
+\section{General model definition}
+\label{sec:defmodel}
+
+Let $Y_i = \left(Y_{i1}, ... , Y_{in_i}\right)^\top$ be a vector of response variables such that
+
+\begin{equation}
+Y_{ij} \sim \mathrm{EIBB}(\mu_{ij}, \phi_{ij}, p^{_0}_{ij}, p^{_1}_{ij}; n_{ij}).
+\label{obseibb}
+\end{equation}
+	
+We introduce predictors through the following general structure:
+\begin{equation}
+\begin{split}
+\mu_{ij} &= h_1(x_{ij}^\top \beta)\\
+\phi_i &= h_2(x_{ij}^{'\top} b)\\
+(p_{ij}^{_0}, p_{ij}^{_1})^\top &= s(z_{ij}^{_0\top} \omega^{_0}, z_{ij}^{_1\top} \omega^{_1})
+\end{split}
+\label{enlaces}
+\end{equation}
+
+where $\beta, b, \omega^{_0}, \omega^{_1}$ are vectors of coefficients and $x_{ij}, x'_{ij}, z_{ij}^{_0}, z_{ij}^{_1}$ are covariate vectors. To stay within parameter space, link functions on the BB parameters should be chosen so that $h_1: \mathbb R \to (0,1)$ and $h_2: \mathbb R \to \mathbb R^+$ while $s: \mathbb R^2 \to (0,1)^2$  with the constraint that $p_{ij}^{_0}+ p_{ij}^{_1} \in (0,1)$.
+
+In this paper, we will use the logit and log links for $h_1$ and $h_2$, respectively. The choice of $s$ will be discussed further in the next two sections.
+
+%% ------------------------------------------------------------------------- %%
+\subsection{Softmax model for proportions}
+\label{sec:softmaxp}
+
+A common choice of function when seeking to introduce covariates on a vector of proportions is the softmax function, which results in the following setup:
+
+\begin{equation}
+\begin{split}
+p_{ij}^{_0} &= {\exp (z_{ij}^{_0\top} \omega^{_0}) \over 1 + \exp (z_{ij}^{_0\top} \omega^{_0})  + z_{ij}^{_1\top} \omega^{_1}} \\
+p_{ij}^{_1} &= {\exp (z_{ij}^{_1\top} \omega^{_1}) \over 1 + \exp (z_{ij}^{_0\top} \omega^{_0})  + z_{ij}^{_1\top} \omega^{_1}}\\
+p_{ij}^{_2} &= {1 \over 1 + \exp (z_{ij}^{_0\top} \omega^{_0})  + z_{ij}^{_1\top} \omega^{_1}}
+\end{split}
+\label{ec_softmax}
+\end{equation}
+
+The assignment above is most easily interpreted by regarding $p_{ij}^{_2}$ as the reference against which the other components are compared via $\log (p_{ij}^{_\nu} / p_{ij}^{_2}) = z_{ij}^{_\nu\top} \omega^{_\nu}$ for $\nu=0,1$.
+
+%% ------------------------------------------------------------------------- %%
+\subsection{Latent variable model for mixture proportions}
+\label{sec:normalp}
+
+An equally versatile but perhaps more interpretable structure can be obtained by considering the existence of a latent random variable, where the mixture proportions are given by accumulated probabiltiy within each of three intervals:
+
+\begin{equation}
+\begin{split}
+p_{ij}^{_0} &= F^{-1}(c_1 \mid \mu'_{ij}, \sigma_{ij}^2) \\
+p_{ij}^{_1} &= F^{-1}(c_2 \mid \mu'_{ij}, \sigma_{ij}^2) - F^{-1}(c_1 \mid \mu_{ij}', \sigma_{ij}^2) \\
+p_{ij}^{_1} &= 1 - F^{-1}(c_2 \mid \mu'_{ij}, \sigma_{ij}^2)
+\end{split}
+\end{equation}
+\begin{equation}
+\begin{split}
+\mu'_{ij} &=  z_{ij}^{_0\top} \omega^{_0}\\
+\sigma_{ij}^{2} &= \log(z_{ij}^{_1\top} \omega^{_1})
+\end{split}
+\end{equation}
+
+The cutpoints $c_1$ and $c_2$ must be fixed to keep model identifiability.
+
+In the special case where $F^{-1}$ is the cumulative logistic distribution and $\sigma$ is fixed, we obtain the proportional-odds model. Given the ease of interpretation that such a setup could provide, testing the fixed-variance assumption may be of interest in certain applications. We provide an overview of model comparison measures after the following section.
+
+%% ------------------------------------------------------------------------- %%
+\section{Setup for Bayesian inference}
+
+As recommended in \cite{Gelman2013}, we use weakly informative priors for all coefficients in the model. For all data where it would seem reasonable to apply this model, the linear predictor for unit interval parameters, under the link functions discussed above, should contain coefficients with magnitudes in the single digits (provided covariates are first standardized). Therefore, zero-centered normal priors with $\sigma=10$ are a reasonable option.
+
+Priors associated to dispersion/precision parameters should keep mass away from zero and allow large values. Cauchy priors fulfill this requirement for coefficients in the linear predictors, but an improper prior for the intercepts is best, as there is no reason to assume they are located around zero.
+
+Though sometimes a full set of improper priors is used as a way of "letting the data speak for itself",  note that such a choice does not guarantee a proper posterior will result. \cite{Tak2015} Briefly, one should verify that interiors group exist, i.e. all the data should not be located at the endpoints, and that there are at least as many observations as there are parameters. If proper priors are employed, these issues are avoided altogether.
+
+%% ------------------------------------------------------------------------- %%
+\section{Measures for model assessment}
+\label{sec:modcomp}
+
+\subsection{Information criteria}
+
+Information criteria provide a way to compare the relative predictive prowess of two or more models. Suitable choices under a Bayesian paradigm include Deviance Information Criterion (DIC), Widely Applicable Information Criterion (WAIC), Expected Akaike Information Criterion (EAIC) and Expected Bayesian Information Criteria (EBIC). The key quantity used to calculate them is the deviance, defined as
+
+\begin{equation}
+\mathcal{D}(L)=-2\log\{L\}
+\end{equation}
+
+\noindent where $L$ is the model's likelihood.
+
+We now provide the formulas for the information criteria, using a bar to denote posterior means.
+
+\begin{itemize}
+\item $\text{DIC}=\mathcal{D}(\bar L) + 2(\bar{\mathcal{D}} (L) - \mathcal{D} (\bar L))$
+\item $\text{WAIC}=\mathcal{D}(\bar L) + \overline{\text{Var}}(\log L)$
+\item $\text{EAIC}=\mathcal{D}(\bar L) + p$
+\item $\text{EBIC}=\mathcal{D}(\bar L) + p \times \log (n)$
+\end{itemize}
+
+In the last two equations, note that $p$ and $n$ stand for number of parameters and observations, respectively.
+
+Because deviance is minimized when parameters allow a perfect fit to the data, models that score lower are to be preferred. The second term in the sum of each criterion are corrections which penalize models for complexity, such that from two models with equal deviance, the one which uses less parameters is favored.
+
+Some issues are the size of what may be considered meaningful differences and that, as these are relative measures of performance, selecting the model with lowest information criteria from a set of candidates provides no guarantee that the model is in fact a good fit for the data at hand. The next section provides a test that may be used to evaluate overall fit, independently of alternative reference models.
+
+\subsection{Bayesian $\chi^2$}
+
+\cite{johnson2004bayesian} proposes a test for a goodness-of-fit testing in a Bayesian setting based on the classical $\chi^2$ test. The test statistic for a discrete random variable model is given by
+
+\begin{equation}
+R^B(\widetilde{\theta}) = \sum_{k=1}^K \left[{m_k - Np_k(\widetilde{\theta}) \over \sqrt{Np_k(\widetilde{\theta})}}\right]^2
+\end{equation}
+
+where $p_k(\widetilde{\theta}) = \frac{1}{N} \sum_{j=1}^N\sum_{y\in \text{bin}k}f_j(y \mid \widetilde{\theta})$ denotes the sum of pmfs $f_j$ evaluated at each observation, conditioned on $\widetilde{\theta}$, a single draw from the posterior parameter vector. The $K$ bins over which the sum takes place correspond to the possible values the random variable may take and $m_k$ is the actual number of such values observed.
+
+The distribution of $R^B(\widetilde{\theta})$ converges to a $\chi^2$ with $K-1$ degrees of freedom as $n \rightarrow \infty$, provided regularity conditions are met and parameter draws are independent. Although this last requirement is violated when repeated draws from the posterior are made based on the sample data sample, the approximation is often good enough. 
+
+To measure fit, one simply draws samples of $R^B$ and a  $\chi^2_{K-1}$ random variable, then compares the proportion of test statistic values which exceed the reference distribution. Large deviations from a value of $0.5$ are then indicative of bad model fit, without need for providing another reference model.
+
+The use of both types of measures will be illustrated in the simulation and application sections which follow.

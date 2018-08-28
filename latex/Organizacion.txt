@@ -1,0 +1,10 @@
+Resumen
+Abstract
+Contents
+List of Figures
+List of Tables
+1. Introduction
+2. The distribution
+3. The regression model
+4. Simulation study
+5. Application to data from a national survey

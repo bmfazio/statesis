@@ -1,10 +1,28 @@
 %% ------------------------------------------------------------------------- %%
 \chapter{Introduction}
-\label{cap:intro}
+\label{cap:introduction}
 
 %% ------------------------------------------------------------------------- %%
-\section{Purpose}
-\label{sec:objs}
+\section{Preliminary Considerations}
+\label{sec:introduction_preliminary-considerations}
+
+IDEAS
+
+- 
+
+Models that introduce inflation at any given value or values are a subtype of mixture models whereby a random distribution is mixed in with degenerate random variables on the same support. This type of models are useful in situations where two underlying processes can result in the same value being recorded, e.g. when asked for number of cigarrettes smokd in the past week, zero is a valid response from both non-smokers and smokers who did not do so recently. An important feature of inflation models is that separate regressions can be used to model the mixture proportions as well as the underlying random variable's behavior, which may provide insights into the different factors driving the behavior of the system under study.
+
+The earliest model of this type was the zero-inflated Poisson (ZIP), put forth in \cite{lambert1992zero}, which was used in understanding the processes whereby manufacturing defects occur. In that setting, a zero may come from equipment in working order as well as defective equipment which may occassionally still output defect-free products. More recent applications of the ZIP model can be seen in \cite{wang2017availability}, where it is evaluated as one possible model for representing the number of times in which fruits and vegetables where recently consumed.
+
+Depending on the framing of the question, however, models related to the Poisson distribution may not be appropriate. \cite{yen2011fruit} uses Poisson and negative binomial models to analyze the number of days in which fruit and vegetable consumption occured, out of the even in a week. This incorrectly places support over all non-negative integers, whereas the question only admits responses in the zero to seven range.
+
+A model that can represent bounded counts with inflation at either endpoint, the endpoint-inflated binomial (EIB) was put forth by \cite{Tian2015}. Applications include simultaneous estimation of total, partial and null susceptibility to drugs or infectious agents, as may be obtained by recording number of organisms affected by a treatment or family members afflicted by disease. As referenced in the previous paragraph, the model is also applicable to survey questions where a bounded count response is requested.
+
+Our present work provides an additional extension the EIB model by considering a beta-binomial distribution instead, which provides a versatile way to model overdispersion that is distinguishable and co-occuring with endpoint inflation.
+
+%% ------------------------------------------------------------------------- %%
+\section{Objectives}
+\label{sec:introduction_objectives}
 
 The overall objective of this thesis is to describe an endpoint-inflated beta-binomial (EIBB) regression model and show its application in a real world problem under a Bayesian paradigm.
 
@@ -17,17 +35,3 @@ Specifically, our goals are as follows:
 \item Conduct simulation studies to understand model behavior over the space of plausible parameters and at its boundaries.
 \item Show its use in analyzing a real world dataset, including model diagnostics.
 \end{itemize}
-
-%% ------------------------------------------------------------------------- %%
-\section{Previous work in inflated count models}
-\label{sec:intro}
-
-Models that introduce inflation at any given value or values are a subtype of mixture models whereby a random distribution is mixed in with degenerate random variables on the same support. This type of models are useful in situations where two underlying processes can result in the same value being recorded, e.g. when asked for number of cigarrettes smokd in the past week, zero is a valid response from both non-smokers and smokers who did not do so recently. An important feature of inflation models is that separate regressions can be used to model the mixture proportions as well as the underlying random variable's behavior, which may provide insights into the different factors driving the behavior of the system under study.
-
-The earliest model of this type was the zero-inflated Poisson (ZIP), put forth in \cite{lambert1992zero}, which was used in understanding the processes whereby manufacturing defects occur. In that setting, a zero may come from equipment in working order as well as defective equipment which may occassionally still output defect-free products. More recent applications of the ZIP model can be seen in \cite{wang2017availability}, where it is evaluated as one possible model for representing the number of times in which fruits and vegetables where recently consumed.
-
-Depending on the framing of the question, however, models related to the Poisson distribution may not be appropriate. \cite{yen2011fruit} uses Poisson and negative binomial models to analyze the number of days in which fruit and vegetable consumption occured, out of the even in a week. This incorrectly places support over all non-negative integers, whereas the question only admits responses in the zero to seven range.
-
-A model that can represent bounded counts with inflation at either endpoint, the endpoint-inflated binomial (EIB) was put forth by \cite{Tian2015}. Applications include simultaneous estimation of total, partial and null susceptibility to drugs or infectious agents, as may be obtained by recording number of organisms affected by a treatment or family members afflicted by disease. As referenced in the previous paragraph, the model is also applicable to survey questions where a bounded count response is requested.
-
-Our present work provides an additional extension the EIB model by considering a beta-binomial distribution instead, which provides a versatile way to model overdispersion that is distinguishable and co-occuring with endpoint inflation.

@@ -2,6 +2,76 @@
 \chapter{The endpoint-inflated beta-binomial distribution}
 \label{cap:distribution}
 
+In this chapter we show the steps to construct the endpoint-inflated beta-binomial distribution, examine its properties and define the parametrization that will be used through the rest of this paper.
+
+We begin by introducing the simpler and familiar distributions that will be used as our building blocks.
+
+%% ------------------------------------------------------------------------- %%
+\section{Binomial distribution}
+
+When $X$ indicates the total number of successes in a series of $n \in \mathbb{N}^+$ independent dichotomous trials, each with probability $p \in [0,1]$, we say that it has a binomial distribution. The point mass function of a binomial random variable is given by
+
+\begin{equation}
+\begin{split}
+f_{X}(x \mid p, n)
+&= \binom{n}{x}p^x(1-p)^{n-x}\\
+\end{split}
+\label{binomial-pmf}
+\end{equation}
+
+with mean $\e{X} = np$ and variance $\var{X} = np(1-p)$.
+
+%% ------------------------------------------------------------------------- %%
+\section{Beta distribution}
+
+A random variable $Y \in (0,1)$ follows a beta distribution with parameters $\alpha, \beta > 0$ if its probability density function is given by
+
+\begin{split}
+f_{Y}(y \mid \alpha, \beta)
+&= \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}y^{\alpha-1}(1-y)^{\beta-1},
+\end{split}
+
+which central moments $\e{Y} = \alpha / (\alpha+ \beta)$ and $\var{Y} = \alpha \beta/[(\alpha+\beta)^2(\alpha+\beta+1)]$.
+
+For brevity, expressions that take the form of the normalizing factor in the above pdf will, from this point on, be denoted through the beta function:
+
+\begin{split}
+B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}
+\end{split}
+
+In the regression context that will be developed later, it is more convenient to parametrize the beta distribution in terms of its mean $\mu$ and a precision parameter $\phi$. The resulting equivalence is  $\alpha = \mu\phi$ and $\beta = (1-\mu)\phi$ and the central moments are reexpressed as
+
+\begin{split}
+\e{Y} = \mu, \quad \var{Y} = \frac{\mu(1-\mu)}{\phi+1}.
+\end{split}
+
+%% ------------------------------------------------------------------------- %%
+\section{Beta-binomial distribution}
+
+Beta random variables have support over $(0,1)$, which includes all values that are allowed for the $p$ parameter in a non-degenerate binomial random variable. If observations on a binomial random variable are thought to come from a random, beta-distributed $p$ we can write
+
+\begin{split}
+X \mid P &\sim \text{Binomial}(n,P)\\
+P &\sim \text{Beta}(\mu, \phi).
+\end{split}
+
+Then, the marginal distribution for $X$ is the beta-binomial and the pmf is
+
+\begin{equation}
+\begin{split}
+f_X(x \mid \mu, \phi, n) = \binom{n}{x}\frac{B(x+\mu\phi, n - x + (1-\mu)\phi)}{B(\mu\phi, (1-\mu)\phi)},
+\end{split}
+\label{betabinomial-pmf}
+\end{equation}
+
+with central moments
+
+FALTA ARREGLAR VARIANZA v
+
+\begin{split}
+\e{X} = n\mu, \quad \var{X} = \frac{\mu(1-\mu)}{\phi+1}.
+\end{split}
+
 %% ------------------------------------------------------------------------- %%
 \section{Probability mass function}
 \label{sec:pmf}

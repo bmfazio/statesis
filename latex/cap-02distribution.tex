@@ -67,12 +67,12 @@ In the regression context that will be developed later, it is more convenient to
 \section{Beta-binomial distribution}
 \label{sec:bbin-dist}
 
-Beta random variables have support over $(0,1)$, which includes all values that are allowed for the $p$ parameter in a non-degenerate binomial random variable. If observations on a binomial random variable $X$ are thought to come from a randomly drawn, beta-distributed $p=P$, then the marginal distribution of $X$ is beta-binomial. Notationally, the relationship is
+Beta random variables have support over $(0,1)$, which includes all values that are allowed for the $p$ parameter in a non-degenerate binomial random variable. If repeated measurements on a binomial random variable $X$ are thought to reflect a randomly drawn, beta-distributed $p=Y$, then the marginal distribution of $X$ is beta-binomial. Notationally, the relationship is
 
 \begin{equation}
 \begin{split}
-X \mid P &\sim \text{Binomial}(P; n)\\
-P &\sim \text{Beta}(\mu, \phi)\\
+X \mid Y &\sim \text{Binomial}(p=Y; n)\\
+Y &\sim \text{Beta}(\mu, \phi)\\
 \Rightarrow X &\sim \text{Beta-binomial}(\mu, \phi; n).
 \end{split}
 \end{equation}
@@ -104,16 +104,18 @@ A random variable $X$ that follows an EIBB distribution behaves as
 
 \begin{equation}
 \begin{split}
-X \sim
+X \mid Z \sim
 \begin{cases}
-\text{Degenerate}(0) \qquad &\text{ with probability } p^{_0},\\
-\text{Beta-binomial}(\mu, \phi; n) \qquad &\text{ with probability } p^{_1},\\
-\text{Degenerate}(n) \qquad &\text{ with probability } p^{_2}.
-\end{cases}
+\text{Degenerate}(0) \qquad &\text{ if } Z=0,\\
+\text{Beta-binomial}(\mu, \phi; n) \qquad &\text{ if } Z=1,\\
+\text{Degenerate}(n) \qquad &\text{ if } Z=2
+\end{cases}\\
+Z \sim \text{Categorical}(p^{_0}, p^{_1}, p^{_2}),
 \end{split}
+\label{eibb-distribution}
 \end{equation}
 
-This is simply a mixture involving the beta-binomial distribution and two degenerate distributions at $0$ and $n$, the endpoints for the beta-binomial.
+where $Z$ is a discrete latent variable. This represents a mixture involving the beta-binomial distribution and two degenerate distributions at the beta-binomial endpoints $0$ and $n$.
 
 In order to write the pmf, we define $I_c(x)$ to be the indicator function for point $c$ and introduce $Y \sim \text{Beta-binomial}(\mu, \phi; n)$. Then the EIBB random variable $X$ has a distribution given by
 
@@ -122,16 +124,22 @@ In order to write the pmf, we define $I_c(x)$ to be the indicator function for p
 f_{X}(x \mid \mu, \phi, p^{_0}, p^{_1}, p^{_2}; n)
 &= p^{_0}I_0(x) + p^{_1} f_{Y}(x) + p^{_2}I_n(x)\\
 &=	\begin{cases}
-p^{_0} + p^{_1} {B(\mu\phi, n+(1-\mu)\phi) \over B(\mu\phi,(1-\mu)\phi)}, & \mathrm{if}\; x=0\\
-p^{_1} {n \choose x} {B(x+\mu\phi, n-x+(1-\mu)\phi) \over B(\mu\phi,(1-\mu)\phi)}, & \mathrm{if}\; x=1,...,n-1\\
-p^{_2} + p^{_1} {B(n+\mu\phi, (1-\mu)\phi) \over B(\mu\phi,(1-\mu)\phi)}, & \mathrm{if}\; x=n\\
-0, & \mathrm{otherwise}
+p^{_0} + p^{_1} {B(\mu\phi, n+(1-\mu)\phi) \over B(\mu\phi,(1-\mu)\phi)} & \text{if}\; x=0\\
+p^{_1} {n \choose x} {B(x+\mu\phi, n-x+(1-\mu)\phi) \over B(\mu\phi,(1-\mu)\phi)} & \text{if}\; x=1,...,n-1\\
+p^{_2} + p^{_1} {B(n+\mu\phi, (1-\mu)\phi) \over B(\mu\phi,(1-\mu)\phi)} & \text{if}\; x=n\\
+0 & \text{otherwise.}
 	\end{cases}
 \end{split}
 \label{densidad}
 \end{equation}
-	
-\noindent where the shape parameters $\alpha > 0$ and $\beta > 0$ are unknown, as are $p^{_0} \in (0, 1)$ and $p^{_1} \in (0, 1)$, which represent the proportions of left an right endpoints that occur in excess of that which would be expected if the generating distribution was beta-binomial alone. Clearly, $p^{_2} = 1 -  (p^{_0}+p^{_1})$.  The right endpoint, $n$, is assumed to be known.\\
+
+We will not require expressions for this distribution's mean and variance, but present them here for completeness:
+
+\begin{equation}
+\begin{split}
+\e{X} = n(p^{_1}\mu + p^{_2}), \quad \var{X} = n^2\left[ p^{_1}\left( \mu + \frac{ \mu(1-\mu)}{n}\frac{(\phi + n)}{(\phi+1)} \right) + p^{_2} - (p^{_1}\mu + p^{_2})^2\right].
+\end{split}
+\end{equation}
 
 \begin{figure}
   \includegraphics[width=\linewidth]{eibb2.png}

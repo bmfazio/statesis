@@ -1,75 +1,83 @@
 %% ------------------------------------------------------------------------- %%
-\chapter{Regression models with EIBB}
+\chapter{The endpoint-inflated beta-binomial regression model}
 \label{cap:model}
 
+In this chapter we introduce our formulation of the EIBB regression model. We will first present the full model likelihood and a set of suggested priors for Bayesian inference. We finish with a brief discussion of applicable model comparison criteria.
+
 %% ------------------------------------------------------------------------- %%
-\section{General model definition}
+\section{Model definition}
 \label{sec:defmodel}
 
-Let $Y_i = \left(Y_{i1}, ... , Y_{in_i}\right)^\top$ be a vector of response variables such that
+Let $Y_i = \begin{pmatrix}Y_{i1} & ... & Y_{iN_i}\end{pmatrix}^\top$, $i = 1,...,N$ be a set of independent response vectors where
 
 \begin{equation}
-Y_{ij} \sim \mathrm{EIBB}(\mu_{ij}, \phi_{ij}, p^{_0}_{ij}, p^{_1}_{ij}; n_{ij}).
-\label{obseibb}
+Y_{ij} \sim \mathrm{EIBB}(\mu_{ij}, \phi_{ij}, p^{_0}_{ij}, p^{_1}_{ij}, p^{_2}_{ij}; n_{ij}).
 \end{equation}
 	
-We introduce predictors through the following general structure:
+The dependence of model parameters on covariates is given by the following general structure:
+
 \begin{equation}
 \begin{split}
-\mu_{ij} &= h_1(x_{ij}^\top \beta)\\
-\phi_i &= h_2(x_{ij}^{'\top} b)\\
-(p_{ij}^{_0}, p_{ij}^{_1})^\top &= s(z_{ij}^{_0\top} \omega^{_0}, z_{ij}^{_1\top} \omega^{_1})
+\mu_{ij} &= h_1(x_{ij}^\top \beta + z_{ij}^\top b_i)\\
+\phi_{ij} &= h_2(\hat{x}_{ij}^{\top} \gamma + \hat{z}_{ij}^{\top} g_i)\\
+\begin{pmatrix}p_{ij}^{_0} & p_{ij}^{_1} & p_{ij}^{_2}\end{pmatrix}^\top &= h_3(\dot{x}_{ij}^{\top} \dot{\delta}+\dot{z}_{ij}^{\top} \dot{d}_i, \ddot{x}_{ij}^{\top} \ddot{\delta}+\ddot{z}_{ij}^{\top} \ddot{d}_i)
 \end{split}
-\label{enlaces}
+\label{regression-model}
 \end{equation}
 
-where $\beta, b, \omega^{_0}, \omega^{_1}$ are vectors of coefficients and $x_{ij}, x'_{ij}, z_{ij}^{_0}, z_{ij}^{_1}$ are covariate vectors. To stay within parameter space, link functions on the BB parameters should be chosen so that $h_1: \mathbb R \to (0,1)$ and $h_2: \mathbb R \to \mathbb R^+$ while $s: \mathbb R^2 \to (0,1)^2$  with the constraint that $p_{ij}^{_0}+ p_{ij}^{_1} \in (0,1)$.
+\noindent where $\beta, \gamma, \dot{\delta}, \ddot{\delta}$ are vectors of fixed effects and $b_i, g_i, \dot{d}_i, \ddot{d}_i$ are vectors of random effects. The vectors $x_{ij}, \hat x_{ij}, \dot x_{ij}, \ddot x_{ij}$ hold covariate values.
 
-In this paper, we will use the logit and log links for $h_1$ and $h_2$, respectively. The choice of $s$ will be discussed further in the next two sections.
+In order to remain within parameter space, the link functions must be defined so that
+
+\begin{equation}
+\begin{split}
+h_1:&\: \mathbb R\; \to (0,1)\\
+h_2:&\: \mathbb R\; \to \mathbb R^+\\
+h_3:&\: \mathbb R^2 \to (0,1)^3\\
+&\: \forall j,k \in \mathbb R \left( \vec 1 \cdot h_3(j,k) = 1 \right).
+\end{split}
+\label{link-definitions}
+\end{equation}
+
+We will take the usual selecton of logit for $h_1$ and log for $h_2$. To motivate our choice for the link function on the mixture proportions, $h_3$, note that the mixture components can be ordered in terms of their expected values: $0<n\mu<n$, for the first, second and third components respectively. We will relax this interpretation soon, but for now, see that the latent $Z$ in \ref{eibb-distribution} which selects the mixture components can be regarded as an ordered categorical variable. Then the ordered probit model gives us a starting point by which to introduce a linear predictor on its parameters $p_{ij}^{_0}$, $p_{ij}^{_1}$, $p_{ij}^{_2}$.
+
+If $\Phi(.;\mu',\sigma'^2)$ is the cumulative distribution function of a normal with mean $\mu'$ and variance $\sigma'^2$ and $c_0$, $c_1$ are two real numbers such that $c_0 < c_1$, the an ordered probit regression model is given by
+
+\begin{equation}
+\begin{split}
+p^{_0} &= \Phi(c_0;\mu'_{ij},\sigma'^{2}) \\
+p^{_1} &= \Phi(c_1;\mu'_{ij},\sigma'^{2}) - \Phi(c_0;\mu'_{ij},\sigma'^{2})\\
+p^{_2} &= 1 - \Phi(c_1;\mu'_{ij},\sigma'^{2})\\
+\mu'_{ij} &= \dot{x}_{ij}^{\top} \dot{\delta}+\dot{z}_{ij}^{\top} \dot{d}_i
+\end{split}
+\label{eq:oprobit}
+\end{equation}
+
+where $x'^\top \nu$ holds the fixed effects terms and $z'^\top v$ are any random effects terms. Given the restriction $\sum_s p_{ij}^{_s} = 1$, we see that the above system relates two free parameters with four unknowns. Therefore some values must be fixed to obtain a unique solution. We choose to set $c_0 = 0$ and $c_1 = 1$. Figure \ref{fig:oprobit} illustrates this setup.
+
+The assumption of a fixed $\sigma'^{2}$ can now be relaxed by setting
+
+\begin{equation}
+\begin{split}
+\sigma'^{2}_{ij} &= log(\ddot{x}_{ij}^{\top} \ddot{\delta}+\ddot{z}_{ij}^{\top} \ddot{d}_i).
+\end{split}
+\label{eq:oprobit2}
+\end{equation}
+
+This retains the flexibility of the more common softmax link function while offering a latent variable interpretation for the inflation behavior.
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{oprobit.png}
+  \caption{The black curve shows a $\mu'$, $\sigma'^{2}$ normal cdf and how the cutpoints $c_0$, $c_1$ are used to retrieve the vector of probabilities. The corresponding normal pdf is shown in gray.}
+  \label{fig:oprobit}
+\end{figure}
+
+Finally, we specify the distribution of 
 
 %% ------------------------------------------------------------------------- %%
-\subsection{Softmax model for proportions}
-\label{sec:softmaxp}
+\section{Bayesian Inference}
 
-A common choice of function when seeking to introduce covariates on a vector of proportions is the softmax function, which results in the following setup:
 
-\begin{equation}
-\begin{split}
-p_{ij}^{_0} &= {\exp (z_{ij}^{_0\top} \omega^{_0}) \over 1 + \exp (z_{ij}^{_0\top} \omega^{_0})  + z_{ij}^{_1\top} \omega^{_1}} \\
-p_{ij}^{_1} &= {\exp (z_{ij}^{_1\top} \omega^{_1}) \over 1 + \exp (z_{ij}^{_0\top} \omega^{_0})  + z_{ij}^{_1\top} \omega^{_1}}\\
-p_{ij}^{_2} &= {1 \over 1 + \exp (z_{ij}^{_0\top} \omega^{_0})  + z_{ij}^{_1\top} \omega^{_1}}
-\end{split}
-\label{ec_softmax}
-\end{equation}
-
-The assignment above is most easily interpreted by regarding $p_{ij}^{_2}$ as the reference against which the other components are compared via $\log (p_{ij}^{_\nu} / p_{ij}^{_2}) = z_{ij}^{_\nu\top} \omega^{_\nu}$ for $\nu=0,1$.
-
-%% ------------------------------------------------------------------------- %%
-\subsection{Latent variable model for mixture proportions}
-\label{sec:normalp}
-
-An equally versatile but perhaps more interpretable structure can be obtained by considering the existence of a latent random variable, where the mixture proportions are given by accumulated probabiltiy within each of three intervals:
-
-\begin{equation}
-\begin{split}
-p_{ij}^{_0} &= F^{-1}(c_1 \mid \mu'_{ij}, \sigma_{ij}^2) \\
-p_{ij}^{_1} &= F^{-1}(c_2 \mid \mu'_{ij}, \sigma_{ij}^2) - F^{-1}(c_1 \mid \mu_{ij}', \sigma_{ij}^2) \\
-p_{ij}^{_1} &= 1 - F^{-1}(c_2 \mid \mu'_{ij}, \sigma_{ij}^2)
-\end{split}
-\end{equation}
-\begin{equation}
-\begin{split}
-\mu'_{ij} &=  z_{ij}^{_0\top} \omega^{_0}\\
-\sigma_{ij}^{2} &= \log(z_{ij}^{_1\top} \omega^{_1})
-\end{split}
-\end{equation}
-
-The cutpoints $c_1$ and $c_2$ must be fixed to keep model identifiability.
-
-In the special case where $F^{-1}$ is the cumulative logistic distribution and $\sigma$ is fixed, we obtain the proportional-odds model. Given the ease of interpretation that such a setup could provide, testing the fixed-variance assumption may be of interest in certain applications. We provide an overview of model comparison measures after the following section.
-
-%% ------------------------------------------------------------------------- %%
-\section{Setup for Bayesian inference}
 
 As recommended in \cite{Gelman2013}, we use weakly informative priors for all coefficients in the model. For all data where it would seem reasonable to apply this model, the linear predictor for unit interval parameters, under the link functions discussed above, should contain coefficients with magnitudes in the single digits (provided covariates are first standardized). Therefore, zero-centered normal priors with $\sigma=10$ are a reasonable option.
 

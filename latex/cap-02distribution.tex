@@ -10,20 +10,20 @@ We begin by introducing the simpler and familiar distributions that will be used
 \section{Binomial distribution}
 \label{sec:bino-dist}
 
-When $X$ indicates the total number of successes in a series of $n \in \mathbb{N}^+$ independent dichotomous trials, each with probability $p \in [0,1]$, we say that it has a binomial distribution. The point mass function of a binomial random variable is given by
+When $X$ indicates the total number of successes in a series of $n \in \mathbb{N}^+$ independent dichotomous trials, each with probability $p \in [0,1]$, we say that it has a binomial distribution. The point mass function of a binomial random variable is
 
 \begin{equation}
 \label{binomial-pmf}
 \begin{split}
 f_{X}(x \mid p; n)
-&= \binom{n}{x}p^x(1-p)^{n-x}\\
+&= \binom{n}{x}p^x(1-p)^{n-x},\quad x=0,..,n\\
 \end{split}
 \end{equation}
 
-with central moments
+with mean and variance given by
 
 \begin{equation}
-\label{binomial-moments}
+\label{binomial-meanvar}
 \begin{split}
 \e{X} = np, \quad \var{X} = np(1-p).
 \end{split}
@@ -40,13 +40,13 @@ A random variable $Y \in (0,1)$ follows a beta distribution with parameters $\al
 \begin{equation}
 \begin{split}
 f_{Y}(y \mid \alpha, \beta)
-&= \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}y^{\alpha-1}(1-y)^{\beta-1},
+&= \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}y^{\alpha-1}(1-y)^{\beta-1},\quad y \in (0,1)
 \end{split}
 \end{equation}
 
-which central moments $\e{Y} = \alpha / (\alpha+ \beta)$ and $\var{Y} = \alpha \beta/[(\alpha+\beta)^2(\alpha+\beta+1)]$.
+with mean $\e{Y} = \alpha / (\alpha+ \beta)$ and variance $\var{Y} = \alpha \beta/[(\alpha+\beta)^2(\alpha+\beta+1)]$.
 
-For brevity, expressions that take the form of the normalizing factor in the above pdf will, from this point on, be denoted through the beta function:
+For brevity, the normalizing factor in the above pdf will from this point on be expressed through the equivalent beta function:
 
 \begin{equation}
 \label{beta-function}
@@ -55,7 +55,9 @@ B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}
 \end{split}
 \end{equation}
 
-In the regression context that will be developed later, it is more convenient to parametrize the beta distribution in terms of its mean $\mu \in (0,1)$ and a precision parameter $\phi > 0$. The resulting equivalence is  $\alpha = \mu\phi$ and $\beta = (1-\mu)\phi$ and the central moments are reexpressed as
+In the regression context that will be developed later, it is more convenient to parametrize the beta distribution in ters of its mean $\mu \in (0,1)$ and a precision parameter $\phi > 0$. The resulting equivalence is  $\alpha = \mu\phi$ and $\beta = (1-\mu)\phi$ and the central moments are reexpressed as
+
+\cite{ferrari2004beta}
 
 \begin{equation}
 \begin{split}
@@ -94,7 +96,7 @@ with central moments
 \end{split}
 \end{equation}
 
-Comparing the above expressions with those for the binomial \ref{binomial-moments}, it can be seen that the meas take the same form, both being governed by a single centrality parameter on the unit iterval. For identical values of $\mu$ and $p$, it can be seen that the beta-binomial variance will exceed that of the binomial by a factor of $(\phi+n)/(\phi+1)$. REFERENCIA A FIGURA CON BINOM VS BETA-BINOM.
+Comparing the above expressions with those for the binomial \ref{binomial-meanvar}, it can be seen that the meas take the same form, both being governed by a single centrality parameter on the unit iterval. For identical values of $\mu$ and $p$, it can be seen that the beta-binomial variance will exceed that of the binomial by a factor of $(\phi+n)/(\phi+1)$. REFERENCIA A FIGURA CON BINOM VS BETA-BINOM.
 
 %% ------------------------------------------------------------------------- %%
 \section{Endpoint-inflated beta-binomial distribution (EIBB)}

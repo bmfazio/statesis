@@ -11,12 +11,12 @@
 \usepackage{amsfonts}
 \usepackage{amssymb} 
 \usepackage{amsmath}
-\usepackage{setspace}                   % espaciamento flexible
-\usepackage[small,compact]{titlesec} 	% encabezamiento de los titulos: menores y compactos
-\usepackage{indentfirst} 				% indentacion del primer parrafo
-\usepackage[round]{natbib} % libreria para la bibliografia
-\usepackage{subfigure} 					% uso de varias figuras en una sola
-\usepackage[nottoc]{tocbibind} 			% para que la bibliografia aparezca en el indice
+\usepackage{setspace}				% espaciamento flexible
+\usepackage[small,compact]{titlesec}	% encabezamiento de los titulos: menores y compactos
+\usepackage{indentfirst}				% indentacion del primer parrafo
+\usepackage[round]{natbib}			% libreria para la bibliografia
+\usepackage{subfigure}				% uso de varias figuras en una sola
+\usepackage[nottoc]{tocbibind}		% para que la bibliografia aparezca en el indice
 \usepackage{setspace}
 \usepackage{longtable}
 \usepackage{lscape}
@@ -26,10 +26,10 @@
 
 % ---------------------------------------------------------------------------- %
 % Algunos comandos
-\graphicspath{{./img/}} 			% direccion donde se encontraran las figuras
-\makeindex  							% para crear el indice
-\raggedbottom   					% para no tener espacios extras en el texto
-\listfiles  							% genera una lista de los archivos utilizados durante la compilacion
+\graphicspath{{./img/}}	% direccion donde se encontraran las figuras
+\makeindex			% para crear el indice
+\raggedbottom			% para no tener espacios extras en el texto
+\listfiles			% genera una lista de los archivos utilizados durante la compilacion
 \normalsize
 
 % Para tener un tamaoo de fuente menor (para figuras e cuadros)
@@ -144,12 +144,12 @@
 %\doublespacing		% interlineado doble 
 
 %Lista de archivos .tex por capitulo
-\input cap-01introduction
-\input cap-02distribution
-\input cap-03model
-\input cap-04estimation
-\input cap-05application
-\input cap-06conclusion
+\include{cap-01introduction}
+\include{cap-02distribution}
+\include{cap-03model}
+\include{cap-04estimation}
+\include{cap-05application}
+\include{cap-06conclusion}
 \appendix
 \include{ape-01}
 

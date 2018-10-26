@@ -4,3 +4,4 @@
 *.jpeg
 *.Rhistory
 *.synctex.gz
+.Rproj.user

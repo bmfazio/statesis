@@ -75,7 +75,10 @@ plan <- drake_plan(
            days.juice = replace(days.juice, had.juice == 3, 0),
            days.fsalad = replace(days.fsalad, had.fsalad == 3, 0),
            days.vsalad = replace(days.vsalad, had.vsalad == 3, 0)) %>%
-    select(-c(had.fruit, had.juice, had.fsalad, had.vsalad))
+    select(-c(had.fruit, had.juice, had.fsalad, had.vsalad)),
+  simu.data =
+    eibb.sim(N = 10**3, n = 50,
+             bx = c(0.1, 0.7, -0.5), bz = c(0.5,0.67,-1), rho = 0.1, s = 0.7, sx = 0.3, sz = 0.2, seed = 1, fullinfo = F)
 )
 
   #

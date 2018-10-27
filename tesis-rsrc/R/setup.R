@@ -68,12 +68,12 @@ eibb.sim <- function(N,      # Number of observations
   set.seed(seed)
   
     # Covariate generation
-  Kx <- length(bx) - 1
+  Kx <- length(bx)
   x <- cbind(rep(1, N),
-             sapply(rep(N, Kx), rnorm, sd = sx)) %>% unlist %>% matrix(nrow = Kx) %>% t
-  Kz <- length(bz) - 1
+             sapply(rep(N, Kx - 1), rnorm, sd = sx)) %>% unlist %>% matrix(ncol = Kx)
+  Kz <- length(bz)
   z <- cbind(rep(1, N),
-             sapply(rep(N, Kz), rnorm, sd = sz)) %>% unlist %>% matrix(nrow = Kz) %>% t
+             sapply(rep(N, Kz - 1), rnorm, sd = sz)) %>% unlist %>% matrix(ncol = Kz)
   
     # Linear predictors
   mu.beta <- invlogit(x %*% bx)
@@ -105,4 +105,4 @@ eibb.sim <- function(N,      # Number of observations
   }
 }
 
-eibb.sim(N = 10, n = 100, bx = c(0, 1, -1), bz = c(0.5,1,2), rho = 0.1, s = 0.1, sx = 0.3, sz = 0.3, seed = 1, fullinfo = F)
+#eibb.sim(N = 10, n = 100, bx = c(0, 1, -1), bz = c(0.5,1,2), rho = 0.1, s = 0.1, sx = 0.3, sz = 0.3, seed = 1, fullinfo = F)

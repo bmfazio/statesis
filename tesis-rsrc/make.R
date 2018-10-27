@@ -13,8 +13,9 @@ make(plan)
 config <- drake_config(plan)
 vis_drake_graph(config)
 
-loadd(endes.merged)
-
+#loadd(endes.merged)
+loadd(simu.data)
+hist(simu.data$y)
 # #### PLAN: fijate que la carga de datos (en mi caso tmb simulacion) aparece como parte del plan
 # # The workflow plan data frame outlines what you are going to do.
 # plan <- drake_plan(

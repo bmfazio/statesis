@@ -1,7 +1,3 @@
-if(length(datadir) == 1 & any(dir.exists(datadir))){
-  ineidir <- file.path(datadir, "inei","endes")
-}
-
 (data.table(haven::read_sav("2017/Modulo414/CSALUD01.sav" %>% paste0(datadir,.), encoding = "latin1")) %>%
     merge(rio::import("2017/Modulo66/REC0111.SAV" %>% paste0(datadir,.), setclass = "data.table"),
           by.x = c("HHID", "QSNUMERO"), by.y = c("hhid","V003"), all.x = T) %>%

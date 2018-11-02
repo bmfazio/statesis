@@ -60,10 +60,10 @@ cumu.norm <- function(mu, s){
 # Simulate data for EIBB regression model estimation
 eibb.sim <- function(N,      # Number of observations
                      n,      # Binomial size
-                     bx, bz, # Coefficients (beta mean, latent normal mean)
-                     rho, s, # Dispersion (beta, normal)
-                     sx, sz, # Dispersion for covariate generation
-                     seed=1, # Random seed
+                     bx = 0, bz = 0.5,    # Coefficients (beta mean, latent normal mean) - default: centered intercept
+                     rho = 0.0001, s = 0, # Dispersion (beta, normal) - default: no beta overdispersion/endpoint inflation
+                     sx = 0.5, sz = 0.3,  # Dispersion for covariate generation
+                     seed = 1, # Random seed
                      fullinfo = FALSE){
   set.seed(seed)
   
@@ -90,18 +90,19 @@ eibb.sim <- function(N,      # Number of observations
               )
 
   if (fullinfo) {
-    list(
-      x = x,
-      z = z,
-      y = y,
-      p = p,
-      Z = Z,
-      mu.norm = mu.norm,
-      mu.beta = mu.beta) %>% return
+    list(N = N, Kx = Kx, Kz = Kz,
+         n = ifelse(length(n) == 1, rep(n, N), n),
+         y = y,
+         x = x, z = z,
+         p = p,
+         Z = Z,
+         mu.norm = mu.norm,
+         mu.beta = mu.beta) %>% return
   } else {
-    list(x = x,
-         z = z,
-         y = y) %>% return
+    list(N = N, Kx = Kx, Kz = Kz,
+         n = if(length(n)==1){rep(n,N)}else{n},
+         y = y,
+         x = x, z = z) %>% return
   }
 }
 

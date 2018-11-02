@@ -6,8 +6,8 @@ functions {
     vector[3] p_vec;
     
     p_vec[1] = Phi(-mu/s);
-    p_vec[2] = Phi((1 - mu)/s) - Phi(-mu/s);
-    p_vec[3] = 1 - Phi((1 - mu)/s);
+    p_vec[2] = Phi(1 - mu/s) - Phi(-mu/s);
+    p_vec[3] = 1 - Phi(1 - mu/s);
     
     return p_vec;
   }
@@ -25,41 +25,21 @@ data {
   matrix[N, Kz] z; // covariate matrix for mixture proportions
 }
 
-transformed data{
-  real ymin[N];
-  real ymax[N];
-  
-  for (i in 1:N) {
-    ymin[i] = 1 - min([ 1, y[i] ]);
-    ymax[i] = 1 - min([ 1, n[i]-y[i] ]);
-  }
-}
-
 parameters {
   vector[Kx] bx; // coeffs for beta mean
-  vector[Kz] bz; // coeffs for latent normal mean
 
-  real<lower=0, upper=5> rho;   // beta dispersion
-  real<lower=0, upper=5> sigma; // normal dispersion
+  real<lower=0> rho;   // beta dispersion
 }
 
 model {
   real mu_beta;
-  real mu_norm;
-  vector[3] p; // Dada la funcion que voy a usar no hay problema con que
-               // esto se salga del rango, pero... ganaria algo usando simplex?
-  
-  bz ~ normal(0, 5);
-  
+
   for (i in 1:N) {
     mu_beta = inv_logit(x[i]*bx);
-    mu_norm = z[i]*bz;
-    
-    p = cumu_norm(mu_norm, sigma);
-    
+
     target +=
     log(
-      ymin[i]*p[1] + ymax[i]*p[3] + p[2]*exp( beta_binomial_lpmf( y[i] | n[i], mu_beta/rho, (1-mu_beta)/rho ) )
+      exp( beta_binomial_lpmf( y[i] | n[i], mu_beta/rho, (1-mu_beta)/rho ) )
       );
   }
 }

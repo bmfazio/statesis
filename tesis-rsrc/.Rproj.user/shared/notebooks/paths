@@ -9,6 +9,7 @@
 /home/bmfazio/git-repos/tesis-pucpstat/tesis-rsrc/R/load-data.R="EA0DDA71"
 /home/bmfazio/git-repos/tesis-pucpstat/tesis-rsrc/R/plan.R="375CE256"
 /home/bmfazio/git-repos/tesis-pucpstat/tesis-rsrc/R/setup.R="C24FEC34"
+/home/bmfazio/git-repos/tesis-pucpstat/tesis-rsrc/R/stanfail.R="CE3CF1E6"
 /home/bmfazio/git-repos/tesis-pucpstat/tesis-rsrc/Stan/bb-regression-model.stan="19827594"
 /home/bmfazio/git-repos/tesis-pucpstat/tesis-rsrc/Stan/bin-regression-model.stan="FC4C84A4"
 /home/bmfazio/git-repos/tesis-pucpstat/tesis-rsrc/Stan/eibb-regression-model.stan="AAE79A04"
@@ -17,4 +18,5 @@
 /home/bmfazio/git-repos/tutorial-drake/main/R/plan.R="7FA9C42F"
 /home/bmfazio/git-repos/tutorial-drake/main/clean.R="9ECCE877"
 /home/bmfazio/git-repos/tutorial-drake/main/make.R="FC6BEEE2"
+/home/bmfazio/git-repos/tutorial-drake/packages/R/plan.R="D33A6EA9"
 /home/bmfazio/git-repos/tutorial-drake/packages/make.R="106C644E"

@@ -12,6 +12,7 @@ source(file.path("R", "setup.R"))
 
 # Create the `drake` plan that outlines the work we are going to do.
 source(file.path("R", "plan.R"))
+#source(file.path("R", "stanfail.R"))
 
 # Run your work with make().
 make(whole_plan)
@@ -39,3 +40,12 @@ vis_drake_graph(config)
 # loadd(simu.eibeb.fit_simu.binom.data);simu.eibeb.fit_simu.binom.data
 # loadd(simu.eibeb.fit_simu.betab.data);simu.eibeb.fit_simu.betab.data
 # loadd(simu.eibeb.fit_simu.eibeb.data);simu.eibeb.fit_simu.eibeb.data
+loadd(endes.eibeb.fit);endes.eibeb.fit
+loadd(endes.betab.fit);endes.betab.fit
+loadd(endes.binom.fit);endes.binom.fit
+
+
+#shinystan::launch_shinystan(endes.eibeb.fit)
+shinystan::launch_shinystan(simu.eibeb.fit_simu.betab.data)
+shinystan::launch_shinystan(simu.eibeb.fit_simu.eibeb.data)
+shinystan::launch_shinystan(simu.eibeb.fit_simu.binom.data)

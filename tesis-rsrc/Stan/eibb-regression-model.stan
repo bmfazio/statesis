@@ -39,8 +39,8 @@ parameters {
   vector[Kx] bx; // coeffs for beta mean
   vector[Kz] bz; // coeffs for latent normal mean
 
-  real<lower=0, upper=5> rho;   // beta dispersion
-  real<lower=0, upper=5> sigma; // normal dispersion
+  real<lower=0> rho;   // beta dispersion
+  real<lower=0> sigma; // normal dispersion
 }
 
 model {
@@ -49,7 +49,15 @@ model {
   vector[3] p; // Dada la funcion que voy a usar no hay problema con que
                // esto se salga del rango, pero... ganaria algo usando simplex?
   
-  bz ~ normal(0, 5);
+  bx ~ normal(0, 5);
+
+  bz[1] ~ cauchy(0.5, 5);
+  for(i in 2:Kz) {
+    bz[i] ~ normal(0, 5);
+  }
+  
+  rho   ~ cauchy(0, 2);
+  sigma ~ cauchy(0, 4);
   
   for (i in 1:N) {
     mu_beta = inv_logit(x[i]*bx);

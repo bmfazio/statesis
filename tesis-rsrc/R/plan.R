@@ -1,3 +1,7 @@
+# VARIABLES PA AANHaaDIR:
+#   - educacion
+#   - consumo de cigarro, alcohol
+
 # The workflow plan data frame outlines what you are going to do.
 # seed_plan <- drake_plan(
 #   seed1 = 2**0,
@@ -66,7 +70,7 @@ simfull_plan <- evaluate_plan(
   values = simulation_plan$target
 )
 
-endes_plan <- drake_plan(
+endes.load_plan <- drake_plan(
     endesdir =
     read.table(file_in("config.txt"), header = TRUE, sep = ";", stringsAsFactors = FALSE) %>%
     filter(id == Sys.info()[c(1,4:6)] %>% paste(collapse = "|")) %>%
@@ -141,7 +145,7 @@ endes_plan <- drake_plan(
            days.vsalad = replace(days.vsalad, had.vsalad == 3, 0)) %>%
     select(-c(had.fruit, had.juice, had.fsalad, had.vsalad)),
   endes.subset0 = (endes.merged %>% subset(!is.na(days.vsalad))),
-  endes.subset = (function(){set.seed(1);endes.subset0[sample(nrow(endes.subset0), 5000),]})(),
+  endes.subset = endes.subset0,#(function(){set.seed(1);endes.subset0[sample(nrow(endes.subset0), 5000),]})(),
   endes.formula =
     days.vsalad ~
     as.factor(sex) +
@@ -159,27 +163,31 @@ endes_plan <- drake_plan(
       y = model.response(endes.frame),
       x = endes.matrix,
       z = endes.matrix
-    ),
-    endes.binom.fit =
-    sampling(binom.model,
-             data = endes.data,
-             chains = 2,
-             iter = 1000),
-    endes.betab.fit =
-    sampling(betab.model,
-             data = endes.data,
-             chains = 2,
-             iter = 1000),
+    )
+)
+
+endes.fit_plan <- drake_plan(
+    # endes.binom.fit =
+    # sampling(binom.model,
+    #          data = endes.data,
+    #          chains = 2,
+    #          iter = 1000),
+    # endes.betab.fit =
+    # sampling(betab.model,
+    #          data = endes.data,
+    #          chains = 2,
+    #          iter = 1000),
     endes.eibeb.fit =
     sampling(eibeb.model,
              data = endes.data,
-             chains = 2,
-             iter = 1000)
+             chains = 1,
+             iter = 2000)
 )
 
 whole_plan <- bind_plans(
   compilestan_plan,
   simulation_plan,
   simfull_plan,
-  endes_plan
+  endes.load_plan,
+  endes.fit_plan
 )

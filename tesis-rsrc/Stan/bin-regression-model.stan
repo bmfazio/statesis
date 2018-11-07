@@ -29,3 +29,17 @@ model {
       );
   }
 }
+
+generated quantities {
+  real mu_beta;
+  vector[N] log_lik;
+  
+  for (i in 1:N) {
+    mu_beta = inv_logit(x[i]*bx);
+
+    log_lik[i] =
+    log(
+      exp( binomial_lpmf(y[i] | n[i], mu_beta) )
+      );
+  }
+}

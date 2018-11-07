@@ -43,3 +43,17 @@ model {
       );
   }
 }
+
+generated quantities {
+  real mu_beta;
+  vector[N] log_lik;
+  
+  for (i in 1:N) {
+    mu_beta = inv_logit(x[i]*bx);
+
+    log_lik[i] =
+    log(
+      exp( beta_binomial_lpmf( y[i] | n[i], mu_beta/rho, (1-mu_beta)/rho ) )
+      );
+  }
+}

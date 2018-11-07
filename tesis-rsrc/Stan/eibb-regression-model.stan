@@ -52,7 +52,7 @@ model {
   bx ~ normal(0, 5);
 
   bz[1] ~ cauchy(0.5, 5);
-  for(i in 2:Kz) {
+  for (i in 2:Kz) {
     bz[i] ~ normal(0, 5);
   }
   
@@ -61,11 +61,25 @@ model {
   
   for (i in 1:N) {
     mu_beta = inv_logit(x[i]*bx);
-    mu_norm = z[i]*bz;
-    
-    p = cumu_norm(mu_norm, sigma);
+    p = cumu_norm(z[i]*bz, sigma);
     
     target +=
+    log(
+      ymin[i]*p[1] + ymax[i]*p[3] + p[2]*exp( beta_binomial_lpmf( y[i] | n[i], mu_beta/rho, (1-mu_beta)/rho ) )
+      );
+  }
+}
+
+generated quantities {
+  real mu_beta;
+  vector[3] p;
+  vector[N] log_lik;
+  
+  for (i in 1:N) {
+    mu_beta = inv_logit(x[i]*bx);
+    p = cumu_norm(z[i]*bz, sigma);
+    
+    log_lik[i] =
     log(
       ymin[i]*p[1] + ymax[i]*p[3] + p[2]*exp( beta_binomial_lpmf( y[i] | n[i], mu_beta/rho, (1-mu_beta)/rho ) )
       );

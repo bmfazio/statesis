@@ -2,16 +2,9 @@
 #   - educacion
 #   - consumo de cigarro, alcohol
 
-# The workflow plan data frame outlines what you are going to do.
-# seed_plan <- drake_plan(
-#   seed1 = 2**0,
-#   seed2 = 2**1,
-#   seed3 = 2**2,
-#   seed4 = 2**3,
-#   seed5 = 2**4
-# )
+# hacer mil simuaciones?
 
-# Las simulaciones deberian tener casos "extremos"
+# Las simulaciones deberian tener casos "extremos" (?)
 # > No existe nada "extremo" para coeficientes lineales per se, pero quiero evaluar interaccion
 # > En el caso de la dispersion beta, seria bueno evaluar en casi binomial y en que momento se bifurca
 # > En el caso de la media y dispersion latente normal, evaluar:
@@ -27,47 +20,89 @@ compilestan_plan <- drake_plan(
   betab.model =
       stan_model(file_in("Stan/bb-regression-model.stan"),
                  model_name = "BB regression"),
+  eibin.model =
+      stan_model(file_in("Stan/eibi-regression-model.stan"),
+                 model_name = "EIBi regression"),
   eibeb.model =
       stan_model(file_in("Stan/eibb-regression-model.stan"),
                  model_name = "EIBB regression")
 )
 
-simulation_plan <- drake_plan(
-simu.binom.data =
-  eibb.sim(N = 10**3, n = 10,
-           bx = c(0, 0.5, -0.5)),
-simu.betab.data =
-  eibb.sim(N = 10**3, n = 10,
-           bx = c(0, 0.5, -0.5),
-           rho = 0.2),
-simu.eibeb.data =
-  eibb.sim(N = 10**3, n = 10,
-           bx = c(0, 0.5, -0.5),
-           rho = 0.2, s = 0.5)
+seeds_plan <- drake_plan(
+  seed0 = sample.int(.Machine$integer.max, 1),
+  seed1 = sample.int(.Machine$integer.max, 1),
+  seed2 = sample.int(.Machine$integer.max, 1),
+  seed3 = sample.int(.Machine$integer.max, 1),
+  seed4 = sample.int(.Machine$integer.max, 1)#,
+  # seed5 = sample.int(.Machine$integer.max, 1),
+  # seed6 = sample.int(.Machine$integer.max, 1),
+  # seed7 = sample.int(.Machine$integer.max, 1),
+  # seed8 = sample.int(.Machine$integer.max, 1),
+  # seed9 = sample.int(.Machine$integer.max, 1)
+)
+
+simulation_betab_pars <- drake_plan(
+  simu.betab.data_0.05 =
+    eibb.sim(N = 10**2, n = 7,
+             bx = c(0, 0.5, -0.5),
+             rho = 0.05,
+             seed = seed__),
+  simu.betab.data_0.05_n500 =
+    eibb.sim(N = 5*10**2, n = 7,
+             bx = c(0, 0.5, -0.5),
+             rho = 0.05,
+             seed = seed__),
+  simu.betab.data_0.05_n1k =
+    eibb.sim(N = 10**3, n = 7,
+             bx = c(0, 0.5, -0.5),
+             rho = 0.05,
+             seed = seed__),
+  simu.betab.data_0.1 =
+    eibb.sim(N = 10**2, n = 7,
+             bx = c(0, 0.5, -0.5),
+             rho = 0.1,
+             seed = seed__),
+  simu.betab.data_0.1_n500 =
+    eibb.sim(N = 5*10**2, n = 7,
+             bx = c(0, 0.5, -0.5),
+             rho = 0.1,
+             seed = seed__),
+  simu.betab.data_0.2 =
+    eibb.sim(N = 10**2, n = 7,
+             bx = c(0, 0.5, -0.5),
+             rho = 0.2,
+             seed = seed__)
+# simu.eibeb.data =
+#   eibb.sim(N = 10**2, n = 7,
+#            bx = c(0, 0.5, -0.5),
+#            rho = 0.2, s = 0.5)
+)
+
+simu_betab_plan <- evaluate_plan(
+  plan = simulation_betab_pars,
+  wildcard = "seed__",
+  values = seeds_plan$target
 )
 
 fit_attempts <- drake_plan(
   simu.binom.fit =
     sampling(binom.model,
              data = data__,
-             chains = 2,
-             iter = 1000),
+             chains = 1, iter = 2000),
   simu.betab.fit =
     sampling(betab.model,
              data = data__,
-             chains = 2,
-             iter = 1000),
-  simu.eibeb.fit =
-    sampling(eibeb.model,
-             data = data__,
-             chains = 2,
-             iter = 1000)
+             chains = 1, iter = 2000)
+  # simu.eibeb.fit =
+  #   sampling(eibeb.model,
+  #            data = data__,
+  #            chains = 1, iter = 2000)
 )
 
 simfull_plan <- evaluate_plan(
   plan = fit_attempts,
   wildcard = "data__",
-  values = simulation_plan$target
+  values = simu_betab_plan$target
 )
 
 endes.load_plan <- drake_plan(
@@ -144,17 +179,19 @@ endes.load_plan <- drake_plan(
            days.fsalad = replace(days.fsalad, had.fsalad == 3, 0),
            days.vsalad = replace(days.vsalad, had.vsalad == 3, 0)) %>%
     select(-c(had.fruit, had.juice, had.fsalad, had.vsalad)),
-  endes.subset0 = (endes.merged %>% subset(!is.na(days.vsalad))),
-  endes.subset = endes.subset0,#(function(){set.seed(1);endes.subset0[sample(nrow(endes.subset0), 5000),]})(),
+  endes.subset0 = endes.merged %>%
+                     subset(!is.na(days.vsalad)|education==8),
+  endes.subset = endes.subset0,
   endes.formula =
     days.vsalad ~
     as.factor(sex) +
-    as.factor(stratum.area) +
+    as.factor(education) +
+    as.factor(loc.region) +
     I(scale(age)) + I(scale(age)**2) +
-    I(scale(wealth.index)),
+    I(scale(wealth.index)) + I(scale(wealth.index)**2),
   endes.frame = model.frame(endes.formula, data = endes.subset),
   endes.matrix = model.matrix(endes.formula, data = endes.subset) %>% as.matrix,
-  endes.data = # seria ideal armar una funcion que me construya esto
+  endes.data =
     list(
       N = nrow(endes.frame),
       Kx = ncol(endes.matrix),
@@ -167,27 +204,27 @@ endes.load_plan <- drake_plan(
 )
 
 endes.fit_plan <- drake_plan(
-    # endes.binom.fit =
-    # sampling(binom.model,
-    #          data = endes.data,
-    #          chains = 2,
-    #          iter = 1000),
-    # endes.betab.fit =
-    # sampling(betab.model,
-    #          data = endes.data,
-    #          chains = 2,
-    #          iter = 1000),
+    endes.betab.fit =
+    sampling(betab.model,
+             data = endes.data,
+             chains = 1, iter = 2000),
     endes.eibeb.fit =
     sampling(eibeb.model,
              data = endes.data,
-             chains = 1,
-             iter = 2000)
+             chains = 1, iter = 2000)
 )
 
 whole_plan <- bind_plans(
   compilestan_plan,
-  simulation_plan,
+  seeds_plan,
+  simu_betab_plan,
   simfull_plan,
-  endes.load_plan,
-  endes.fit_plan
+  endes.load_plan
+  #endes.fit_plan
 )
+
+#endes.merged$days.vsalad %>% table %>% barplot
+
+# rbbin(10**6) %>% table %>% prop.table -> betabinom
+# rbbin(10**6, rho = 0.0001) %>% table %>% prop.table -> cuasi_binom
+# rbinom(10**6, 10,prob = 0.5) %>% table %>% prop.table -> real_binom

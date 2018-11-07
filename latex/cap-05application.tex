@@ -1,11 +1,27 @@
 %% ------------------------------------------------------------------------- %%
-\chapter{Two applications}
-\label{cap:application}
+\chapter{Applications with real data}
+\label{cap:applications}
+
+In this chapter, we show the inferences obtained by applying the EIBB regression model to a real dataset and compare its performance to simpler alternatives.
+
+%% ------------------------------------------------------------------------- %%
+\section{Data}
+\label{sec:applications-data}
+
+The \textit{Encuesta Demogr\'afica y de Salud Familiar} (ENDES) is a yearly national survey conducted by the Peruvian government to provide information on demographic dynamics and health status of the population. Households are sampled in a stratified two-stage scheme and information on household members is gathered, with some questionnaires being restricted based on the person's age and sex.
+
+We will use data from the 2017 round, which included the \textit{Cuestionario de Salud}, a health-focused questionnaire that includes questions on behaviors linked to chronic disease and is applied to people from both sexes and ages 15 onwards. Specifically, we take as our outcome variable the response to item 219, which asks the respondent how many days out of the last seven they ate vegetable salad. By design, the response is discrete and bounded between 0 and 7. Additionally, the empirical distribution of the responses suggests that inflation is present in at both endpoints. Thus, an EIBB regression appears to be a suitable model choice.
+
+%% ------------------------------------------------------------------------- %%
+\section{Model structure}
+\label{sec:applications-structure}
+
+%% ------------------------------------------------------------------------- %%
+\section{Results}
+\label{sec:applications-results}
+
+
 
 %% ------------------------------------------------------------------------- %%
 \section{Role preference in MSM}
 \label{sec:sexmsm}
-
-%% ------------------------------------------------------------------------- %%
-\section{Vegetable consumption patterns}
-\label{sec:veggies}

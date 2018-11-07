@@ -2,10 +2,36 @@
 \chapter{Simulation study}
 \label{cap:simulation}
 
+In this chapter, we explore the conditions under which our model is likely to be useful by simulating data from an EIBB distribution with degenerate or near-boundary parameters and applying model comparison criteria against simpler models.
+
 %% ------------------------------------------------------------------------- %%
-\section{Parameter grid}
-\label{sec:prior}
+\section{Simulation setup}
+\label{sec:simsetup}
+
+We first compare the binomial and beta-binomial models in order to determine the minimal level of overdispersion, governed by $\rho$, that can be reliably detected over a range of sample sizes, starting at $n = 100$. We then compare binomial and endpoint-inflated binomial models to find the minimal level of reliably detectable inflation, which is introduced by increases to $\sigma$.
+
+Simultaneously, we examine parameter recovery for the coefficients of linear predictors which were placed on the mean of the binomial component and, once inflation is introduced, on the mean of the latent normal component. In both cases, a symmetry-inducing intercept was selected together with two covariates drawn from mean zero independent normal distributions.
+
+The formal model comparison criteria used was the PSIS-LOO information criterion, but we first disqualify models where a majority of simulations resulted in fitting issues as identified by transitions that diverge or reach maximum treedepth, since these can also be a sign of inadequate model specification in practice. Each scenario was evaluated on one hundred simulated datasets, always using the weakly informative priors introduced in section 3.4. 
 
 %% ------------------------------------------------------------------------- %%
 \section{Results}
-\label{sec:simu}
+\label{sec:simresults}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{||c c c c c c||} 
+\hline
+n      &$\rho$& $\sigma$ & $\beta$ & $\dot{\delta}$ & Selected model \\ [0.5ex] 
+ \hline\hline
+100  & 0.05  &  \multirow{6}{*}{0} & \multirow{6}{*}{$\begin{pmatrix} 0 \\ 0.5 \\ -0.5\end{pmatrix}$} 
+& \multirow{6}{*}{0.5}& Binomial (fitting issues)\\
+500  & 0.05  & & & & Binomial (fitting issues)\\
+1000& 0.05  & & & & Beta-binomial (best LOOIC)\\
+100  & 0.01  & & & & Binomial (fitting issues)\\
+500  & 0.01  & & & & Beta-binomial (best LOOIC)\\
+100  & 0.2    & & & & Beta-binomial (best LOOIC)\\ [1ex] 
+
+ \hline
+ \end{tabular}
+\end{table}

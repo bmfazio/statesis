@@ -72,10 +72,6 @@ simulation_betab_pars <- drake_plan(
              bx = c(0, 0.5, -0.5),
              rho = 0.2,
              seed = seed__)
-# simu.eibeb.data =
-#   eibb.sim(N = 10**2, n = 7,
-#            bx = c(0, 0.5, -0.5),
-#            rho = 0.2, s = 0.5)
 )
 
 simu_betab_plan <- evaluate_plan(
@@ -84,7 +80,7 @@ simu_betab_plan <- evaluate_plan(
   values = seeds_plan$target
 )
 
-fit_attempts <- drake_plan(
+simu_fits <- drake_plan(
   simu.binom.fit =
     sampling(binom.model,
              data = data__,
@@ -93,16 +89,26 @@ fit_attempts <- drake_plan(
     sampling(betab.model,
              data = data__,
              chains = 1, iter = 2000)
-  # simu.eibeb.fit =
-  #   sampling(eibeb.model,
-  #            data = data__,
-  #            chains = 1, iter = 2000)
 )
 
-simfull_plan <- evaluate_plan(
-  plan = fit_attempts,
+simu_fits_plan <- evaluate_plan(
+  plan = simu_fits,
   wildcard = "data__",
   values = simu_betab_plan$target
+)
+
+commands <- paste0("tab_looic_divergent(", simu_fits_plan$target, ")")
+targets <- paste0("looic_", simu_fits_plan$target)
+simu_looic <- data.frame(target = targets, command = commands)
+
+loo_tab_plan <- gather_plan(
+  plan = simu_looic,
+  target = "looic_tab",
+  gather = "rbind"
+)
+
+loo_reshape_plan <- drake_plan(
+  looic_tab2 = cbind(looic_tab[1:(nrow(looic_tab)/2),],looic_tab[-(1:(nrow(looic_tab)/2)),])
 )
 
 endes.load_plan <- drake_plan(
@@ -208,23 +214,31 @@ endes.fit_plan <- drake_plan(
     sampling(betab.model,
              data = endes.data,
              chains = 1, iter = 2000),
+    endes.eibin.fit =
+    sampling(eibin.model,
+             data = endes.data,
+             chains = 1, iter = 2000),
     endes.eibeb.fit =
     sampling(eibeb.model,
              data = endes.data,
              chains = 1, iter = 2000)
 )
 
+endes.loo_plan <- drake_plan(
+  betab.loo = tab_looic_divergent(endes.betab.fit),
+  eibin.loo = tab_looic_divergent(endes.eibin.fit),
+  eibeb.loo = tab_looic_divergent(endes.eibeb.fit),
+  endes.loo.tab = rbind(betab.loo, eibin.loo, eibeb.loo)
+)
+
 whole_plan <- bind_plans(
   compilestan_plan,
   seeds_plan,
   simu_betab_plan,
-  simfull_plan,
-  endes.load_plan
-  #endes.fit_plan
+  simu_fits_plan,
+  loo_tab_plan,
+  loo_reshape_plan,
+  endes.load_plan,
+  endes.fit_plan,
+  endes.loo_plan
 )
-
-#endes.merged$days.vsalad %>% table %>% barplot
-
-# rbbin(10**6) %>% table %>% prop.table -> betabinom
-# rbbin(10**6, rho = 0.0001) %>% table %>% prop.table -> cuasi_binom
-# rbinom(10**6, 10,prob = 0.5) %>% table %>% prop.table -> real_binom

@@ -107,4 +107,16 @@ eibb.sim <- function(N,      # Number of observations
   }
 }
 
-#eibb.sim(N = 10, n = 100, bx = c(0, 1, -1), bz = c(0.5,1,2), rho = 0.1, s = 0.1, sx = 0.3, sz = 0.3, seed = 1, fullinfo = F)
+tab_looic_divergent <- function(fit){
+  data.frame(model = attr(fit, "model_name"),
+             N = attr(fit, "sim")$dims_oi$log_lik,
+             looic = loo(fit)$estimates[3,1],
+             divergent = get_num_divergent(fit))
+}
+
+gather_plan <- function (plan = NULL, target = "target", gather = "list") {
+    command <- paste(plan$target, "=", plan$command)
+    command <- paste(command, collapse = ", ")
+    command <- paste0(gather, "(", command, ")")
+    tibble(target = target, command = command)
+}

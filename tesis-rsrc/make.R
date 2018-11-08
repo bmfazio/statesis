@@ -21,7 +21,9 @@ config <- drake_config(whole_plan)
 vis_drake_graph(config)
 
 ### outputs
-endes.data$y %>% table %>% prop.table %>% barplot
-
 loadd(endes.betab.fit)
-summary(endes.betab.fit)$summary[1:35,] %>% as.matrix %>% round(2)
+
+loadd(bx_names)
+ble <- do.call(cbind, extract(endes.betab.fit, pars = c("bx", "rho")))
+colnames(ble) <- c(bx_names, "rho")
+mcmc_areas(ble[,-6]) 

@@ -106,10 +106,10 @@ loo_tab_plan <- gather_plan(
   target = "looic_tab",
   gather = "rbind"
 )
-
-loo_reshape_plan <- drake_plan(
-  looic_tab2 = cbind(looic_tab[1:(nrow(looic_tab)/2),],looic_tab[-(1:(nrow(looic_tab)/2)),])
-)
+ 
+# loo_reshape_plan <- drake_plan(
+#   looic_tab2 = cbind(looic_tab[1:(nrow(looic_tab)/2),],looic_tab[-(1:(nrow(looic_tab)/2)),])
+# )
 
 endes.load_plan <- drake_plan(
     endesdir =
@@ -206,6 +206,14 @@ endes.load_plan <- drake_plan(
       y = model.response(endes.frame),
       x = endes.matrix,
       z = endes.matrix
+    ),
+  bx_names = c(
+    "Intercept", "Sex: Female",
+    "Education: Primary", "Education: Secondary", "Education: Higher", "Education: DK", # ref none
+    "Ancash", "Apurimac", "Arequipa", "Ayacucho", "Cajamarca", "Callao", "Cusco", # ref amazones
+    "Huancavelica", "Huanuco", "Ica", "Junin", "La Libertad", "Lambayeque", "Lima", "Loreto",
+    "Madre de Dios", "Moquegua", "Pasco", "Piura", "Puno", "San Martin", "Tacna", "Tumbes", "Ucayali",
+    "Age", "Age^2", "Wealth Index", "Wealth Index^2"
     )
 )
 
@@ -231,14 +239,73 @@ endes.loo_plan <- drake_plan(
   endes.loo.tab = rbind(betab.loo, eibin.loo, eibeb.loo)
 )
 
+plots_plan <- drake_plan(
+  Q219 =
+    (function(x){
+      png(filename=x, width = 600, height = 400)
+      endes.data$y %>%
+        table %>%
+        prop.table %>%
+        barplot(xlab = "Days", ylab = "Proportion",
+                main = "Ate vegetable salad on how many days out of last seven? (n = 33 206)")
+      dev.off()
+      })(file_out("output/images/Q219.png")),
+  betab_post =
+    (function(x){
+      post_ <- do.call(cbind, extract(endes.betab.fit, pars = c("bx", "rho")))
+      colnames(post_) <- c(bx_names, "rho")
+      mcmc_areas(post_[,-6]) + coord_cartesian(xlim = c(-1.5, 1))
+      ggsave(x, width = 8, height = 6)
+      })(file_out("output/images/betab_post.png")),
+  eibin_post =
+    (function(x){
+      post_ <- do.call(cbind, extract(endes.eibin.fit, pars = c("bx", "sigma")))
+      colnames(post_) <- c(bx_names, "sigma")
+      mcmc_areas(post_[,-6]) + coord_cartesian(xlim = c(-1.5, 1))
+      ggsave(x, width = 8, height = 6)
+      })(file_out("output/images/eibin_post.png")),
+  eibeb_post =
+    (function(x){
+      post_ <- do.call(cbind, extract(endes.eibeb.fit, pars = c("bx", "rho")))
+      colnames(post_) <- c(bx_names, "rho")
+      mcmc_areas(post_[,-6]) + coord_cartesian(xlim = c(-1.5, 1))
+      ggsave(x, width = 8, height = 6)
+      })(file_out("output/images/eibeb_post.png"))
+)
+
+
+tables_plan <- drake_plan(
+  betab.endes.tab = (function(){
+    post_pars <- do.call(cbind, extract(endes.betab.fit, pars = c("bx", "rho")))
+    colnames(post_pars) <- c(bx_names, "rho")
+    par_tab <- round(as.vector(apply(post_pars[,-6], 2, mean)),3)
+    names(par_tab) <- colnames(post_pars[,-6])
+    return(t(t(par_tab)))
+  })(),
+  eibin.endes.tab = (function(){
+    post_pars <- do.call(cbind, extract(endes.eibin.fit, pars = c("bx", "bz", "sigma")))
+    colnames(post_pars) <- c(bx_names, bx_names, "sigma")
+    par_tab <- round((apply(post_pars[,-c(6,40)], 2, quantile, probs = c(0.05, 0.25, 0.5, 0.75, 0.95))),3)
+    return(t(par_tab))
+  })(),
+  eibeb.endes.tab = (function(){
+    post_pars <- do.call(cbind, extract(endes.eibeb.fit, pars = c("bx", "bz", "sigma","rho")))
+    colnames(post_pars) <- c(bx_names, bx_names, "sigma","rho")
+    par_tab <- round((apply(post_pars[,-c(6,40)], 2, quantile, probs = c(0.05, 0.25, 0.5, 0.75, 0.95))),3)
+    return(t(par_tab))
+  })()
+)
+
 whole_plan <- bind_plans(
   compilestan_plan,
   seeds_plan,
   simu_betab_plan,
   simu_fits_plan,
   loo_tab_plan,
-  loo_reshape_plan,
+#  loo_reshape_plan,
   endes.load_plan,
   endes.fit_plan,
-  endes.loo_plan
+  endes.loo_plan,
+  plots_plan,
+  tables_plan
 )

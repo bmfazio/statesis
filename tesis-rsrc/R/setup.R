@@ -111,6 +111,7 @@ tab_looic_divergent <- function(fit){
   data.frame(model = attr(fit, "model_name"),
              N = attr(fit, "sim")$dims_oi$log_lik,
              looic = loo(fit)$estimates[3,1],
+             waic = waic(extract(fit, "log_lik")$log_lik)$estimates[3,1],
              divergent = get_num_divergent(fit))
 }
 

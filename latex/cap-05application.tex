@@ -44,6 +44,19 @@ p^{_2}_i &= 1 - \Phi(1;\mu'_{i},\sigma'^{2})\\
 \section{Results}
 \label{sec:applications-results}
 
+\begin{table}[h!]
+\centering
+\begin{tabular}{||c c c c||} 
+\hline
+Model                                          & WAIC      & LOOIC    & t\\ [0.5ex] 
+ \hline\hline
+Beta-binomial                              & 119 563  &  119 563 & $\sim$2.5h\\
+Endpoint-inflated binomial          & 112 740  &  112 741 & $\sim$2.2h\\
+Endpoint-inflated beta-binomial  & 112 532  &  112 533 & $\sim$7.1h\\  [1ex] 
+ \hline
+ \end{tabular}
+\end{table}
+
 \begin{figure}
   \includegraphics[width=\linewidth]{betab_post.png}
   \caption{Posterior distribution for beta-binomial model}

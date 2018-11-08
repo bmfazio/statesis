@@ -45,9 +45,9 @@ If $\Phi(.;\mu',\sigma'^2)$ is the cumulative distribution function of a normal 
 
 \begin{equation}
 \begin{split}
-p^{_0} &= \Phi(c_0;\mu'_{ij},\sigma'^{2}) \\
-p^{_1} &= \Phi(c_1;\mu'_{ij},\sigma'^{2}) - \Phi(c_0;\mu'_{ij},\sigma'^{2})\\
-p^{_2} &= 1 - \Phi(c_1;\mu'_{ij},\sigma'^{2})\\
+p^{_0}_{ij} &= \Phi(c_0;\mu'_{ij},\sigma'^{2}) \\
+p^{_1}_{ij} &= \Phi(c_1;\mu'_{ij},\sigma'^{2}) - \Phi(c_0;\mu'_{ij},\sigma'^{2})\\
+p^{_2}_{ij} &= 1 - \Phi(c_1;\mu'_{ij},\sigma'^{2})\\
 \mu'_{ij} &= \dot{x}_{ij}^{\top} \dot{\delta}+\dot{z}_{ij}^{\top} \dot{d}_i
 \end{split}
 \label{eq:oprobit}
@@ -73,7 +73,7 @@ This retains the flexibility of the more common softmax link function while offe
 \end{figure}
 
 %% ------------------------------------------------------------------------- %%
-\section{Bayesian Inference}
+\section{Considerations for Bayesian inference}
 
 As recommended in \cite{Gelman2013}, we use weakly informative priors for all coefficients in the model. For all data where it would seem reasonable to apply this model, the linear predictor for unit interval parameters, under the link functions discussed above, should contain coefficients with magnitudes in the single digits (provided covariates are first standardized). Therefore, zero-centered normal priors with $\sigma=10$ are a reasonable option.
 
@@ -125,3 +125,29 @@ The distribution of $R^B(\widetilde{\theta})$ converges to a $\chi^2$ with $K-1$
 To measure fit, one simply draws samples of $R^B$ and a  $\chi^2_{K-1}$ random variable, then compares the proportion of test statistic values which exceed the reference distribution. Large deviations from a value of $0.5$ are then indicative of bad model fit, without need for providing another reference model.
 
 The use of both types of measures will be illustrated in the simulation and application sections which follow.
+
+\subsection{Pareto-smoothed importance sampling leave-one-out (PSIS-LOO)}
+
+Leave-one-out crossvalidation (LOO) allows assessment of a model's predictive accuracy but requires refitting of the model several times, which is computationally costly. Vehtari (2017) reviews approaches to estimating exact LOO results using approximations based on the whole-dataset posterior, which requires a single fit. They propose PSIS-LOO based on its robustness in the presence of limited data and weak prior information. In particular, they show that it is more stable than WAIC estimates.
+
+Importance sampling introduces importance ratios. For each Monte Carlo sample $s$ of the likelihood for a data point $y_i$, an importance ratio is defined as
+
+\begin{equation}
+r^s_i = \frac{1}{p(y_i \mid \theta^s)} \propto \frac{p(\theta^2 \mid y_{-i})}{p(\theta^s \mid y}.
+\end{equation}
+
+These ratios can in turn be used to approximate the predictive distribution:
+
+\begin{equation}
+p(\tilde{y_i} \mid y_{-i}) \approx \frac{\sum_{s=1}^S r_i^s p(\tilde{y_i}\mid \theta^s}{\sum_{s=1}^S r_i^s}.
+\end{equation}
+
+However, using this ratio directly can lead to $r_i^s$ values with high or even infinite variance. Pareto-smoothing stabilizes this value by fitting a generalized Pareto distribution to the top $20\%$ importance ratios and replacing them with the corresponding value of the order statistics in the fitted distribution. In addition, values are truncated at $S^{3/4}\bar w_i$, where $\bar w_i$ corresponds to the $S$ averaged smoothed weights of the distribution when point $i$ is held out. The truncated weights are labeled $w_i^s$. The PSIS-LOO approximation is then given by
+
+\begin{equation}
+\hat{\text{elpd}_{\text{psis-loo}}} = \sum_{i=1}^n \log \left( \frac{\sum_{s=1}^S w_i^s p(y_i \mid \theta^s}{\sum_{s=1}^S w_i^s} \right).
+\end{equation}
+
+Multiplying the above value by -2 converts the estimate to deviance scale, making it comparable to WAIC.
+
+The PSIS-LOO procedure is implemented in the loo R package and includes diagnostics that indicate when the approximation is unreliable based on the value of the fitted Pareto distribution's $k$ parameter.

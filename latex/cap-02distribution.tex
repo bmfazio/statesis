@@ -55,9 +55,7 @@ B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}
 \end{split}
 \end{equation}
 
-In the regression context that will be developed later, it is more convenient to parametrize the beta distribution in ters of its mean $\mu \in (0,1)$ and a precision parameter $\phi > 0$. The resulting equivalence is  $\alpha = \mu\phi$ and $\beta = (1-\mu)\phi$ and the central moments are reexpressed as
-
-\cite{ferrari2004beta}
+In the regression context that will be developed later, it is more convenient to parametrize the beta distribution in ters of its mean $\mu \in (0,1)$ and a precision parameter $\phi > 0$, as introduced by \cite{ferrari2004beta}. The resulting equivalence is  $\alpha = \mu\phi$ and $\beta = (1-\mu)\phi$ and the central moments are reexpressed as
 
 \begin{equation}
 \begin{split}
@@ -96,7 +94,7 @@ with central moments
 \end{split}
 \end{equation}
 
-Comparing the above expressions with those for the binomial \ref{binomial-meanvar}, it can be seen that the meas take the same form, both being governed by a single centrality parameter on the unit iterval. For identical values of $\mu$ and $p$, it can be seen that the beta-binomial variance will exceed that of the binomial by a factor of $(\phi+n)/(\phi+1)$. REFERENCIA A FIGURA CON BINOM VS BETA-BINOM.
+Comparing the above expressions with those for the binomial \ref{binomial-meanvar}, it can be seen that the meas take the same form, both being governed by a single centrality parameter on the unit iterval. For identical values of $\mu$ and $p$, it can be seen that the beta-binomial variance will exceed that of the binomial by a factor of $(\phi+n)/(\phi+1)$. Plots of its pmf for selected parameter values are shown in \ref{fig:eibb}.
 
 %% ------------------------------------------------------------------------- %%
 \section{Endpoint-inflated beta-binomial distribution (EIBB)}
@@ -144,7 +142,7 @@ We will not require expressions for this distribution's mean and variance, but p
 \end{equation}
 
 \begin{figure}
-  \includegraphics[width=\linewidth]{eibb2.png}
+  \includegraphics[width=\linewidth]{eibb.png}
   \caption{The EIBB distribution for three combinations of mean and precision parameters with fixed mixture proportions $p^{_0} = p^{_1} = 0.25$}
   \label{fig:eibb}
 \end{figure}

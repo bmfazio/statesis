@@ -10,18 +10,58 @@ In this chapter, we show the inferences obtained by applying the EIBB regression
 
 The \textit{Encuesta Demogr\'afica y de Salud Familiar} (ENDES) is a yearly national survey conducted by the Peruvian government to provide information on demographic dynamics and health status of the population. Households are sampled in a stratified two-stage scheme and information on household members is gathered, with some questionnaires being restricted based on the person's age and sex.
 
-We will use data from the 2017 round, which included the \textit{Cuestionario de Salud}, a health-focused questionnaire that includes questions on behaviors linked to chronic disease and is applied to people from both sexes and ages 15 onwards. Specifically, we take as our outcome variable the response to item 219, which asks the respondent how many days out of the last seven they ate vegetable salad. By design, the response is discrete and bounded between 0 and 7. Additionally, the empirical distribution of the responses suggests that inflation is present in at both endpoints. Thus, an EIBB regression appears to be a suitable model choice.
+We will use data from the 2017 round, which included the \textit{Cuestionario de Salud}, a health-focused questionnaire that includes questions on behaviors linked to chronic disease and is applied to people from both sexes and ages 15 onwards. Specifically, we take as our outcome variable the response to item 219, which asks the respondent how many days out of the last seven they ate vegetable salad. By design, the response is discrete and bounded between 0 and 7; additionally, the empirical distribution of the responses suggests that inflation is present in at both endpoints \ref{fig:q219}. Thus, an EIBB regression appears to be a suitable model choice.
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{Q219.png}
+  \caption{The empirical distribution of responses for the selected outcome}
+  \label{fig:q219}
+\end{figure}
 
 %% ------------------------------------------------------------------------- %%
 \section{Model structure}
 \label{sec:applications-structure}
 
+We take the EIBB regression model as presented in \ref{regression-model}, using a fixed $\phi$ and the ordered probit model described in \ref{eq:oprobit}, which also fixes $\sigma'$. Changes in both $\mu$ and $\mu'$ are conceptually similar as they both indicate an increase or decrease in the propensity to consume vegetable salad, therefore we include the same set of covariates on both: sex, highest level of education, household's wealth index (WI), $\text{WI}^2$, age, $\text{age}^2$ and the region of residence. The complete model is then
+
+\begin{equation}
+\begin{split}
+Y_{i} &\sim \mathrm{EIBB}(\mu_i, \phi, p^{_0}_{i}, p^{_1}_{i}, p^{_2}_{i}; n = 7) \\
+\mu_{i} &= \text{logit}^{-1}\left( x_{i}^\top \beta \right) \\
+\mu_{i}' &= x_{i}^{\top} \dot{\delta} \\
+p^{_0}_i &= \Phi(0;\mu'_{i},\sigma'^{2}) \\
+p^{_1}_i &= \Phi(1;\mu'_{i},\sigma'^{2}) - \Phi(0;\mu'_{i},\sigma'^{2})\\
+p^{_2}_i &= 1 - \Phi(1;\mu'_{i},\sigma'^{2})\\
+\beta_{1 ... 33} &\sim \text{N}(0, 5)\\
+\dot{\delta}_1 &\sim \text{N}(0.5, 5)\\
+\dot{\delta}_{2 ... 33} &\sim \text{N}(0, 5)\\
+1/\phi &\sim \text{Half-Cauchy}(0, 2)\\
+\sigma' &\sim \text{Half-Cauchy}(0, 4)
+\end{split}
+\end{equation}
+
 %% ------------------------------------------------------------------------- %%
 \section{Results}
 \label{sec:applications-results}
 
+\begin{figure}
+  \includegraphics[width=\linewidth]{betab_post.png}
+  \caption{Posterior distribution for beta-binomial model}
+  \label{fig:post-betab}
+\end{figure}
 
+\begin{figure}
+  \includegraphics[width=\linewidth]{eibin_post.png}
+  \caption{Posterior distribution for endpoint-inflated binomial model}
+  \label{fig:post-eibin}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{eibeb_post.png}
+  \caption{Posterior distribution for endpoint-inflated beta-binomial model}
+  \label{fig:post-eibeb}
+\end{figure}
 
 %% ------------------------------------------------------------------------- %%
-\section{Role preference in MSM}
-\label{sec:sexmsm}
+%% \section{Role preference in MSM}
+%% \label{sec:sexmsm}

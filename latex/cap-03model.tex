@@ -41,7 +41,7 @@ h_3:&\: \mathbb R^2 \to (0,1)^3\\
 
 We will take the usual selecton of logit for $h_1$ and log for $h_2$. To motivate our choice for the link function on the mixture proportions, $h_3$, note that the mixture components can be ordered in terms of their expected values: $0<n\mu<n$, for the first, second and third components respectively. We will relax this interpretation soon, but for now, see that the latent $Z$ in \ref{eibb-distribution} which selects the mixture components can be regarded as an ordered categorical variable. Then the ordered probit model gives us a starting point by which to introduce a linear predictor on its parameters $p_{ij}^{_0}$, $p_{ij}^{_1}$, $p_{ij}^{_2}$.
 
-If $\Phi(.;\mu',\sigma'^2)$ is the cumulative distribution function of a normal with mean $\mu'$ and variance $\sigma'^2$ and $c_0$, $c_1$ are two real numbers such that $c_0 < c_1$, the an ordered probit regression model is given by
+If $\Phi(.;\mu',\sigma'^2)$ is the cumulative distribution function of a normal with mean $\mu'$ and variance $\sigma'^2$ and $c_0$, $c_1$ are two real numbers such that $c_0 < c_1$, the ordered probit regression model is given by
 
 \begin{equation}
 \begin{split}
@@ -72,12 +72,8 @@ This retains the flexibility of the more common softmax link function while offe
   \label{fig:oprobit}
 \end{figure}
 
-Finally, we specify the distribution of 
-
 %% ------------------------------------------------------------------------- %%
 \section{Bayesian Inference}
-
-
 
 As recommended in \cite{Gelman2013}, we use weakly informative priors for all coefficients in the model. For all data where it would seem reasonable to apply this model, the linear predictor for unit interval parameters, under the link functions discussed above, should contain coefficients with magnitudes in the single digits (provided covariates are first standardized). Therefore, zero-centered normal priors with $\sigma=10$ are a reasonable option.
 

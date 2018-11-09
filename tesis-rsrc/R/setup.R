@@ -121,3 +121,19 @@ gather_plan <- function (plan = NULL, target = "target", gather = "list") {
     command <- paste0(gather, "(", command, ")")
     tibble(target = target, command = command)
 }
+
+# Endpoint-inflated beta-binomial
+deibb <- function(y, mu, rho, p1, p2, p3, n) {
+  if(p1+p2+p3!=1){stop("p elements must sum to 1")}
+  p1*ifelse(y==0, 1, 0) +
+    p2*rmutil::dbetabinom(y, n, mu, 1/rho) +
+    p3*ifelse(y==n, 1, 0)
+}
+
+peibb <- function(y, mu, rho, p1, p2, p3, n) {
+  pacote <- data.frame(y, mu, rho, p1, p2, p3, n)
+  apply(pacote, 1,
+        function(x) sum(
+          deibb(0:x[[1]], x[[2]], x[[3]], x[[4]], x[[5]], x[[6]], x[[7]])
+          ))
+}

@@ -14,9 +14,16 @@
 # mira en simu_fits_plan para sacar LL
 loadd(simu.betab.data_0.05_n1k_seed0)
 loadd(simu.binom.fit_simu.betab.data_0.05_n1k_seed0)
+loadd(simu.betab.data_0.05_seed0)
+loadd(simu.binom.fit_simu.betab.data_0.05_seed0)
 
+
+### Inicio de "la funcion"
+# Carga de los resultados previos (data + posteriores)
 origdata <- simu.betab.data_0.05_n1k_seed0
 modelfit <- simu.binom.fit_simu.betab.data_0.05_n1k_seed0
+origdata <- simu.betab.data_0.05_seed0
+modelfit <- simu.binom.fit_simu.betab.data_0.05_seed0
 
 allPars <- c("bx", "bz", "rho", "sigma")
 fitPars <- attributes(modelfit)$model_pars
@@ -24,7 +31,7 @@ fitPars <- attributes(modelfit)$model_pars
 parpost <- extract(modelfit, intersect(allPars, fitPars))
 
 # Comenzar calculo RB, un posterior sample a la vez
-i <- 1
+i <- 1 # O sea esto iria de 1:1000 (o nrow de los bx post)
 
 n <- 7
 y <- origdata$y
@@ -35,22 +42,24 @@ mu <- invlogit(x%*%bx)
 
 # para mi caso k = y
 # pk calculeshon
+# ESTAZ MAL: la ubicacion de los cuantiles depende de los parametros(?)
 kquants <- (0:8)*1/8
-cdf <- pbinom(y, n, mu)
+#cdf <- pbinom(y, n, mu)
 
 # seguro que esta bien v ? piensa como afecta la observacion individual
-pk <- sapply(1:8, function(k) sum(dbinom(k-1, n, prob = mu))/N)
-Pk <- c(0,cumsum(pk))
+#Pk <- c(0,cumsum(pk))
 
 lapply(1:8, function(k) {
-  mk <- sum(ifelse(cumsum(pk[1:k]) <cdf&cdf<= kquants[k+1], 1, 0))
+  pk <- sum(dbinom(k-1, n, prob = mu))
+  ak <- pbinom(k-1.1, n, prob = mu)
+  Fy <- pbinom(y, n, prob = mu)
+  aK <- pbinom(k-1, n, prob = mu)
+  mk <- sum(ifelse(ak <Fy&Fy<= aK, 1, 0))
   data.frame(pk = pk, mk = mk)
   }) %>% do.call(rbind, .) -> rbk
 
 # Calculo de R^B para una muestra de la posterior
-RB <- with(rbk, sum(((mk - N*pk)/sqrt(N*pk))**2))
+RB <- with(rbk, sum(((mk - pk)/sqrt(pk))**2))
 
-# esto se ve correcto?
-hist((a[a$y == 5,]$cdf))
-barplot(table(y))
-hist(cdf)
+quantile(rchisq(10**6, 7))
+pchisq(RB, 7)

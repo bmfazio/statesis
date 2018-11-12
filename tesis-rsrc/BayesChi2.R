@@ -12,16 +12,16 @@
 
 # mira en simu_betab_plan para sacar data y
 # mira en simu_fits_plan para sacar LL
-loadd(simu.betab.data_0.05_n1k_seed0)
-loadd(simu.binom.fit_simu.betab.data_0.05_n1k_seed0)
+# loadd(simu.betab.data_0.05_n1k_seed0)
+# loadd(simu.binom.fit_simu.betab.data_0.05_n1k_seed0)
 loadd(simu.betab.data_0.05_seed0)
 loadd(simu.binom.fit_simu.betab.data_0.05_seed0)
 
 
 ### Inicio de "la funcion"
 # Carga de los resultados previos (data + posteriores)
-origdata <- simu.betab.data_0.05_n1k_seed0
-modelfit <- simu.binom.fit_simu.betab.data_0.05_n1k_seed0
+# origdata <- simu.betab.data_0.05_n1k_seed0
+# modelfit <- simu.binom.fit_simu.betab.data_0.05_n1k_seed0
 origdata <- simu.betab.data_0.05_seed0
 modelfit <- simu.binom.fit_simu.betab.data_0.05_seed0
 
@@ -31,7 +31,7 @@ fitPars <- attributes(modelfit)$model_pars
 parpost <- extract(modelfit, intersect(allPars, fitPars))
 
 # Comenzar calculo RB, un posterior sample a la vez
-i <- 1 # O sea esto iria de 1:1000 (o nrow de los bx post)
+i <- 999 # O sea esto iria de 1:1000 (o nrow de los bx post)
 
 n <- 7
 y <- origdata$y
@@ -39,15 +39,6 @@ x <- origdata$x
 
 bx <- parpost$bx[i,]
 mu <- invlogit(x%*%bx)
-
-# para mi caso k = y
-# pk calculeshon
-# ESTAZ MAL: la ubicacion de los cuantiles depende de los parametros(?)
-kquants <- (0:8)*1/8
-#cdf <- pbinom(y, n, mu)
-
-# seguro que esta bien v ? piensa como afecta la observacion individual
-#Pk <- c(0,cumsum(pk))
 
 lapply(1:8, function(k) {
   pk <- sum(dbinom(k-1, n, prob = mu))
@@ -61,5 +52,4 @@ lapply(1:8, function(k) {
 # Calculo de R^B para una muestra de la posterior
 RB <- with(rbk, sum(((mk - pk)/sqrt(pk))**2))
 
-quantile(rchisq(10**6, 7))
 pchisq(RB, 7)

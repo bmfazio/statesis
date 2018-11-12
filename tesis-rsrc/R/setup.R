@@ -65,8 +65,7 @@ eibb.sim <- function(N,      # Number of observations
                      rho = 0.0001, s = 0, # Dispersion (beta, normal) - default: no beta overdispersion/endpoint inflation
                      sx = 0.5, sz = 0.3,  # Dispersion for covariate generation
                      seed = 1, # Random seed
-                     fullinfo = FALSE){
-  set.seed(seed)
+                     fullinfo = FALSE) {
   
     # Covariate generation
   Kx <- length(bx)
@@ -122,6 +121,21 @@ gather_plan <- function (plan = NULL, target = "target", gather = "list") {
     tibble(target = target, command = command)
 }
 
+# Endpoint-inflated binomial
+deibi <- function(y, mu, p1, p2, p3, n) {
+  if(p1+p2+p3!=1){stop("p elements must sum to 1")}
+  p1*ifelse(y==0, 1, 0) +
+    p2*dbinom(y, n, mu) +
+    p3*ifelse(y==n, 1, 0)
+}
+
+peibi <- function(y, mu, p1, p2, p3, n) {
+  pacote <- data.frame(y, mu, p1, p2, p3, n)
+  apply(pacote, 1,
+        function(x) sum(
+          deibi(0:x[[1]], x[[2]], x[[3]], x[[4]], x[[5]], x[[6]], x[[7]])
+          ))
+}
 # Endpoint-inflated beta-binomial
 deibb <- function(y, mu, rho, p1, p2, p3, n) {
   if(p1+p2+p3!=1){stop("p elements must sum to 1")}

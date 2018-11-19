@@ -121,7 +121,7 @@ gather_plan <- function (plan = NULL, target = "target", gather = "list") {
     tibble(target = target, command = command)
 }
 
-# Endpoint-inflated binomial
+# Endpoint-inflated binomial pmf/cdf
 deibi <- function(y, mu, p1, p2, p3, n) {
   if(p1+p2+p3!=1){stop("p elements must sum to 1")}
   p1*ifelse(y==0, 1, 0) +
@@ -136,7 +136,7 @@ peibi <- function(y, mu, p1, p2, p3, n) {
           deibi(0:x[[1]], x[[2]], x[[3]], x[[4]], x[[5]], x[[6]], x[[7]])
           ))
 }
-# Endpoint-inflated beta-binomial
+# Endpoint-inflated beta-binomial pmf/cdf
 deibb <- function(y, mu, rho, p1, p2, p3, n) {
   if(p1+p2+p3!=1){stop("p elements must sum to 1")}
   p1*ifelse(y==0, 1, 0) +
@@ -151,3 +151,11 @@ peibb <- function(y, mu, rho, p1, p2, p3, n) {
           deibb(0:x[[1]], x[[2]], x[[3]], x[[4]], x[[5]], x[[6]], x[[7]])
           ))
 }
+
+## probitaz para el cumunormo -> prop p1:3
+cumu.norm(0.5,0.30397842)
+cumu.norm(0.5,0.3901521)
+cumu.norm(0.5,0.4824237)
+cumu.norm(0.5,0.5940915)
+cumu.norm(0.5,0.7413011)
+cumu.norm(0.5,0.95346959)

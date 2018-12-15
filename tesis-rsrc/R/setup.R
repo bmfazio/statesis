@@ -1,4 +1,5 @@
 # Libraries
+# library(conflicted)
 library(drake)
 library(tidyverse)
 library(bayesplot)
@@ -6,6 +7,7 @@ library(rstan)
 library(loo)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
+options(stringsAsFactors = FALSE)
 pkgconfig::set_config("drake::strings_in_dots" = "literals")
 
 # Inverse logistic
@@ -114,13 +116,6 @@ tab_looic_divergent <- function(fit){
              divergent = get_num_divergent(fit))
 }
 
-gather_plan <- function (plan = NULL, target = "target", gather = "list") {
-    command <- paste(plan$target, "=", plan$command)
-    command <- paste(command, collapse = ", ")
-    command <- paste0(gather, "(", command, ")")
-    tibble(target = target, command = command)
-}
-
 # Endpoint-inflated binomial pmf/cdf
 deibi <- function(y, mu, p1, p2, p3, n) {
   if(p1+p2+p3!=1){stop("p elements must sum to 1")}
@@ -152,10 +147,29 @@ peibb <- function(y, mu, rho, p1, p2, p3, n) {
           ))
 }
 
-## probitaz para el cumunormo -> prop p1:3
-cumu.norm(0.5,0.30397842)
-cumu.norm(0.5,0.3901521)
-cumu.norm(0.5,0.4824237)
-cumu.norm(0.5,0.5940915)
-cumu.norm(0.5,0.7413011)
-cumu.norm(0.5,0.95346959)
+# Create divergence table from simulation fits
+diverg.tb <- function(...) {
+  ddd <- list(...)
+  simu.label <- strsplit(
+    c(
+      names(ddd)
+      ),"_") %>%
+    sapply(function(x){x[3:6]}) %>%
+    data.frame(row.names = c("model", "data", "pars", "n")) %>%
+    t %>% as.tibble %>%
+    mutate(n = as.numeric(substr(n, 2, 99)))
+  as.tibble(cbind(simu.label, divergent = unlist(ddd)))
+}
+
+diverg.tb2 <- function(...) {
+  ddd <- list(...)
+  simu.label <- strsplit(
+    c(
+      names(ddd)
+      ),"_") %>%
+    sapply(function(x){x[1:4]}) %>%
+    data.frame(row.names = c("model", "data", "pars", "n")) %>%
+    t %>% as.tibble %>%
+    mutate(n = as.numeric(substr(n, 2, 99)))
+  as.tibble(cbind(simu.label, divergent = unlist(ddd)))
+}

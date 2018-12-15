@@ -1,5 +1,4 @@
-// Mixtura de dos fronteras constantes con una binomial
-// Adaptado por Boris Fazio de stan-reference-2.17.0 p194
+// Hand-implemented binomial regression CUZ IM COOL LIKE THAT
 
 data {
   int<lower=1> N; // sample size (data.frame rows)

@@ -1,19 +1,3 @@
-# compilestan_plan <- drake_plan(
-#   binom.model =
-#       stan_model(file_in("Stan/bin-regression-model.stan"),
-#                  model_name = "Binomial regression"),
-#   betab.model =
-#       stan_model(file_in("Stan/bb-regression-model.stan"),
-#                  model_name = "BB regression"),
-#   eibin.model =
-#       stan_model(file_in("Stan/eibi-regression-model.stan"),
-#                  model_name = "EIBi regression"),
-#   eibeb.model =
-#       stan_model(file_in("Stan/eibb-regression-model.stan"),
-#                  model_name = "EIBB regression")
-# )
-# 
-# 
 # commands <- paste0("tab_looic_divergent(", simu_fits_plan$target, ")")
 # targets <- paste0("looic_", simu_fits_plan$target)
 # simu_looic <- data.frame(target = targets, command = commands)
@@ -29,8 +13,6 @@
 # # )
 # 
 # 
-# # VARIABLES PA AANHaaDIR:
-# #   - consumo de cigarro, alcohol
 # 
 # endes.load_plan <- drake_plan(
 #     endesdir =
@@ -107,15 +89,16 @@
 #            days.vsalad = replace(days.vsalad, had.vsalad == 3, 0)) %>%
 #     select(-c(had.fruit, had.juice, had.fsalad, had.vsalad)),
 #   endes.subset0 = endes.merged %>%
-#                      subset(!is.na(days.vsalad)|education==8),
+#                      subset(!(is.na(days.vsalad)|education==8)),
 #   endes.subset = endes.subset0,
 #   endes.formula =
 #     days.vsalad ~
 #     as.factor(sex) +
 #     as.factor(education) +
 #     as.factor(loc.region) +
-#     I(scale(age)) + I(scale(age)**2) +
-#     I(scale(wealth.index)) + I(scale(wealth.index)**2),
+#     as.factor(wealth.quintile) +
+#     as.factor(month) +
+#     I(scale(age)) + I(scale(age)**2),
 #   endes.frame = model.frame(endes.formula, data = endes.subset),
 #   endes.matrix = model.matrix(endes.formula, data = endes.subset) %>% as.matrix,
 #   endes.data =
@@ -128,13 +111,16 @@
 #       x = endes.matrix,
 #       z = endes.matrix
 #     ),
+
 #   bx_names = c(
 #     "Intercept", "Sex: Female",
-#     "Education: Primary", "Education: Secondary", "Education: Higher", "Education: DK", # ref none
-#     "Ancash", "Apurimac", "Arequipa", "Ayacucho", "Cajamarca", "Callao", "Cusco", # ref amazones
+#     "Education: Primary", "Education: Secondary", "Education: Higher", # ref none
+#     "Ancash", "Apurimac", "Arequipa", "Ayacucho", "Cajamarca", "Callao", "Cusco", # ref amazonas
 #     "Huancavelica", "Huanuco", "Ica", "Junin", "La Libertad", "Lambayeque", "Lima", "Loreto",
 #     "Madre de Dios", "Moquegua", "Pasco", "Piura", "Puno", "San Martin", "Tacna", "Tumbes", "Ucayali",
-#     "Age", "Age^2", "Wealth Index", "Wealth Index^2"
+#     "Wealth 2", "Wealth 3", "Wealth 4", "Wealth 5", # ref Wealth 1 (mas pobre)
+#     "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Noviembre", "Diciembre", # ref enero
+#     "Age", "Age^2"
 #     )
 # )
 # 
@@ -147,7 +133,7 @@
 #     sampling(eibin.model,
 #              data = endes.data,
 #              chains = 1, iter = 2000),
-#     endes.eibeb.fit =
+#     endes.eibeb.fit = ########### SACA ESTO, DEMORA MUCHO - Idea alternativa, pasalo por optimizing
 #     sampling(eibeb.model,
 #              data = endes.data,
 #              chains = 1, iter = 2000)
@@ -156,8 +142,7 @@
 # endes.loo_plan <- drake_plan(
 #   betab.loo = tab_looic_divergent(endes.betab.fit),
 #   eibin.loo = tab_looic_divergent(endes.eibin.fit),
-#   eibeb.loo = tab_looic_divergent(endes.eibeb.fit),
-#   endes.loo.tab = rbind(betab.loo, eibin.loo, eibeb.loo)
+#   endes.loo.tab = rbind(betab.loo, eibin.loo)
 # )
 # 
 # plots_plan <- drake_plan(
@@ -220,8 +205,8 @@
 plan_final <- bind_plans(
   compilestan_plan,
   seeds_plan,
-  simu_betab_plan,
-  simu_fits_plan
+  simu_plan,
+  divergent_plan
 #   loo_tab_plan,
 # #  loo_reshape_plan,
 #   endes.load_plan,
@@ -230,3 +215,10 @@ plan_final <- bind_plans(
 #   plots_plan,
 #   tables_plan
 )
+
+
+## SIGUE: comparar tiempos
+## Sesgo/prediccion bajo diferentes condiciones de generacion de data
+## Efectos aleatorios
+## Incorporar a ENDES (haz parametrizacion no centrada, no la cagues)
+## Dos secciones de priors: as model descriptors / as computational tools

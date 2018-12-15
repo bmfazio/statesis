@@ -11,7 +11,6 @@
 source(file.path("R", "setup.R"))
 
 # Create the `drake` plan that outlines the work we are going to do.
-#source(file.path("R", "plan.R"))
 source(file.path("R", "compile.R"))
 source(file.path("R", "simulation.R"))
 source(file.path("R", "plan.R"))
@@ -30,4 +29,8 @@ make(plan_final, seed = 1991)
 # loadd(bx_names)
 # ble <- do.call(cbind, extract(endes.betab.fit, pars = c("bx", "rho")))
 # colnames(ble) <- c(bx_names, "rho")
-# mcmc_areas(ble[,-6]) 
+# #mcmc_areas(ble[,-6]) 
+# 
+# loadd(num_divergences)
+# num_divergences %>% subset(model == 2) %>% group_by(pars, n) %>% summarise(divergent = sum(divergent))
+# # Patron de nombre:

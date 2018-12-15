@@ -1,0 +1,28 @@
+Cap 1 - Intro
+> Habla de Lambert, fue la primera en mixtar conteos (McE te inspira)
+> Revisa el otro libro de conteo y que dicen los economistas?
+> Mencionar Ferrari/Cribari-Neto + refs McElreath en relación a efectos aleatorios para conteo
+> 2015 Tian: sus derivaciones muestran 6 representaciones estocasticas equivalentes, solo las dos primeras permiten el rango completo a la binomial y tratan de forma simetrica el proceso de seleccion de endpoints
+
+Cap 3 - Modelo
+> Detallar las parametrizaciones de Tian
+> Introduce desde aqui la nocion de sobredispersion = efecto aleatorio
+> Detallar implementacion de los efectos aleatorios correlacionados (prior LKJ)
+  - Justificar por que usar la normal iz g00f (comodidad y epistemologia thx Dr. McE)
+> En discusión sobre priors hablar sobre conjugacy, informatividad y eficiencia computacional
+
+Cap 4 - Simulacion
+> Demostrar que el uso de la binomial simple resulta en estimacion/prediccion sesgadas de la media
+> Evaluar problemas de ajuste/tiempo de fit/medidas de ajuste al usar Bin+NormRandEff en vez de BetaB
+
+Cap 5 - Aplicacion
+> Explicar que en la informacion de frecuencia+cantidad lo segundo no es tan fiable (ver citas epifood) por lo cual no basta analizar el producto izipizi si no que mejor usar un modelo adecuado para la resp discreta
+> Agregar variable MES para considerar el efecto de la estacionalidad en disponibilidad
+  - Si el efecto es significativo, esta podría ser la cosa más interesante de toda la aplicación
+> Mostrar que predicciones del consumo promedio/consumo total son mas acertadas con mi modelo
+  - TENGO MIEDO facil no porque la dist binomial predice media juuust fine bueno we'll see
+> Se puede hablar del "efecto real" de REGION?
+  - Para intervencion de salud, sabemos que mejorar el consumo de frutas y verduras
+
+Cap 6 - Conclusion
+> Recomendar modelamiento en dos pasos: primero binomial, realizar evaluacion posterior para determinar si es necesario complejizar (de otro modo puede incurrirse un alto costo computacional)
